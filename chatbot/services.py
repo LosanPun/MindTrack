@@ -963,8 +963,8 @@ Make the hopeful, happy choice."""
             cls._update_state(user_message, response, detected_mood)
             return response
         
-        # Check for NEPALI poem requests
-        if 'nepali' in user_message_lower and 'poem' in user_message_lower:
+        # FIX: Check for NEPALI poem requests FIRST - THIS IS THE CRITICAL FIX
+        if 'nepali' in user_message_lower:
             # Determine Nepali poem category
             # CHECK EXPLICIT REQUESTS FIRST
             if 'motivat' in user_message_lower:
@@ -998,7 +998,7 @@ Make the hopeful, happy choice."""
             cls._update_state(user_message, response, detected_mood)
             return response
         
-        # Check for poem requests (English)
+        # Check for poem requests (English) - MUST COME AFTER NEPALI CHECK
         if 'poem' in user_message_lower or 'poetry' in user_message_lower:
             # Determine poem category based on mood
             # CHECK EXPLICIT REQUESTS FIRST
@@ -1088,7 +1088,7 @@ Make the hopeful, happy choice."""
             cls._update_state(user_message, response, mood_for_song)
             return response
         
-        # Check for quote requests
+        # FIX: Check for quote requests - NOW THIS COMES AFTER NEPALI CHECK
         if 'quote' in user_message_lower or 'quotes' in user_message_lower:
             # Determine quote category based on explicit request
             if 'motivational' in user_message_lower or 'motivate' in user_message_lower:
@@ -1159,6 +1159,33 @@ Make the hopeful, happy choice."""
             cls._update_state(user_message, response, detected_mood)
             return response
         
+        # Check for specific emotional support questions (NEW FIX)
+        if any(word in user_message_lower for word in ['fear', 'scared', 'afraid', 'overcome', 'anxiety', 'worry']):
+            # These should trigger specific responses, not mood-based responses
+            if 'fear' in user_message_lower or 'scared' in user_message_lower or 'afraid' in user_message_lower:
+                fear_responses = [
+                    "Fear can be overwhelming, but it's also a natural protective response. Would you like to explore specific techniques for managing fear, or talk about what's triggering it? 🛡️",
+                    "I hear you're dealing with fear. This emotion often points to something we care deeply about. Let's explore constructive ways to work with this feeling.",
+                    "Fear can feel paralyzing. Sometimes breaking it down into smaller, manageable pieces helps. What's the specific fear that's coming up for you?",
+                    "When facing fear, grounding exercises can be helpful. Would you like to try a breathing technique or a mindfulness exercise to help calm your nervous system?",
+                    "Fear is often about anticipating future threats. Bringing your attention to the present moment can help reduce its intensity. Let's explore some present-focused strategies."
+                ]
+                response = random.choice(fear_responses)
+            elif 'overcome' in user_message_lower:
+                overcome_responses = [
+                    "Overcoming challenges often starts with small, manageable steps. What specific area would you like to focus on overcoming? 🌱",
+                    "The desire to overcome something shows your resilience! Let's explore practical strategies and supportive resources for your specific challenge.",
+                    "Overcoming obstacles is a process. Would you like to break down what you're facing into smaller, more manageable pieces?",
+                    "I'm here to support you in overcoming challenges. Let's start by identifying what resources or strategies might be most helpful for your situation."
+                ]
+                response = random.choice(overcome_responses)
+            else:
+                # Default response for emotional support questions
+                response = "I hear you're seeking support with emotional challenges. Let's explore what specific strategies or resources might be most helpful for you right now. 💭"
+            
+            cls._update_state(user_message, response, 'anxious')  # Set mood to anxious for these questions
+            return response
+        
         # Check for cheer up requests
         if 'cheer' in user_message_lower and 'up' in user_message_lower:
             cls._conversation_state['cheer_up_context'] = True
@@ -1173,7 +1200,7 @@ Make the hopeful, happy choice."""
             cls._update_state(user_message, response, detected_mood)
             return response
         
-        # Mood-based responses
+        # Mood-based responses - ONLY if no other conditions matched
         if detected_mood and detected_mood in cls.MOOD_RESPONSES:
             cls._conversation_state['current_mood'] = detected_mood
             if detected_mood == 'sad':
@@ -1212,7 +1239,7 @@ Make the hopeful, happy choice."""
             return 'lonely'
         if 'tired' in text_lower or 'exhausted' in text_lower:
             return 'tired'
-        if 'anxious' in text_lower or 'anxiety' in text_lower:
+        if 'anxious' in text_lower or 'anxiety' in text_lower or 'fear' in text_lower or 'scared' in text_lower:
             return 'anxious'
         if 'angry' in text_lower or 'mad' in text_lower:
             return 'angry'
@@ -1222,7 +1249,7 @@ Make the hopeful, happy choice."""
             return 'sad'
         
         # NEW: Add motivational mood detection (only if no emotional mood detected)
-        if 'motivat' in text_lower or 'inspire' in text_lower or 'encourag' in text_lower:
+        if 'motivat' in text_lower or 'inspire' in text_lower or 'encourag' in text_lower or 'overcome' in text_lower:
             return 'motivational'
         
         return None
