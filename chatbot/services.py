@@ -15,7 +15,8 @@ class MindTrackChatbot:
         'cheer_up_context': False,
         'last_interaction': None,
         'interaction_count': 0,
-        'current_mood': None
+        'current_mood': None,
+        'last_topic': None  # NEW: Track last conversation topic
     }
     
     # Enhanced mood-based responses with professional tone
@@ -78,13 +79,79 @@ class MindTrackChatbot:
             "I hear the tiredness. Sometimes gentle, low-energy activities can be most restorative when we're feeling drained.",
             "Your body is asking for care through this tiredness. How can we support that need together?"
         ],
-        # NEW: Motivational mood responses
         'motivational': [
             "I hear you're looking for motivation! Sometimes we all need that extra push. What specific area of your life are you looking to energize? 💪",
             "Motivation often starts with small, actionable steps. What's one tiny thing you could do right now to build momentum?",
             "The desire for motivation itself is a great starting point! Let's explore what inspires and energizes you.",
             "I'm here to help you find that motivational spark! Would specific strategies, inspiring content, or practical steps be most helpful?",
             "Motivation grows from action. What's one small commitment you could make to yourself today?"
+        ]
+    }
+    
+    # CONSTRUCTIVE WAYS for each mood - NEW ADDITION
+    CONSTRUCTIVE_WAYS = {
+        'happy': [
+            "To sustain and deepen your happiness, try:\n\n1. **Practice gratitude journaling** - Write down 3 things you're grateful for each day\n2. **Share your joy** - Happiness grows when shared; tell someone about your happy moment\n3. **Engage in flow activities** - Do activities where time seems to fly (art, music, sports)\n4. **Create a happiness jar** - Write happy moments on slips of paper and collect them\n5. **Practice mindful appreciation** - Spend 5 minutes fully appreciating something beautiful\n6. **Set up 'happy hours'** - Schedule regular time for activities you love\n7. **Learn something new** - Challenge yourself with a new skill or hobby\n8. **Connect with positive people** - Surround yourself with uplifting influences\n9. **Engage in creative expression** - Paint, write, dance, or create something\n10. **Spend time in nature** - Nature amplifies positive emotions",
+            
+            "Constructive ways to build on your happiness:\n\n1. **Celebrate small wins** - Acknowledge and celebrate even tiny achievements\n2. **Practice random acts of kindness** - Helping others boosts your own happiness\n3. **Develop a mindfulness practice** - Regular meditation enhances emotional wellbeing\n4. **Create a vision board** - Visualize what brings you joy and work toward it\n5. **Establish healthy routines** - Consistent sleep, exercise, and nutrition support happiness\n6. **Limit negative input** - Reduce exposure to negative news and social media\n7. **Practice positive self-talk** - Be your own best cheerleader\n8. **Engage in physical activity** - Exercise releases endorphins that boost mood\n9. **Cultivate optimism** - Practice seeing the positive in situations\n10. **Build meaningful connections** - Deepen relationships that matter to you",
+            
+            "To cultivate more happiness:\n\n1. **Savor positive experiences** - Extend happy moments by paying full attention to them\n2. **Practice forgiveness** - Let go of grudges to make space for joy\n3. **Set boundaries** - Protect your energy and time for what matters most\n4. **Engage in spiritual practice** - Connect with something larger than yourself\n5. **Volunteer or help others** - Giving creates profound satisfaction\n6. **Create beauty around you** - Make your environment pleasing and inspiring\n7. **Practice acceptance** - Accept what you cannot change to reduce frustration\n8. **Develop resilience skills** - Learn to bounce back from disappointments\n9. **Find purpose** - Engage in activities that feel meaningful\n10. **Balance work and play** - Ensure you have time for both productivity and enjoyment"
+        ],
+        
+        'sad': [
+            "Constructive ways to work with sadness:\n\n1. **Practice self-compassion** - Speak to yourself as you would a dear friend\n2. **Express your feelings** - Journal, create art, or talk about what you're experiencing\n3. **Connect with support** - Reach out to trusted friends, family, or a professional\n4. **Engage in gentle movement** - Walk, stretch, or do gentle yoga\n5. **Allow the feeling** - Let yourself feel sad without judgment; it has its own wisdom\n6. **Practice the 5-4-3-2-1 grounding technique** - Notice 5 things you see, 4 things you feel, 3 things you hear, 2 things you smell, 1 thing you taste\n7. **Listen to soothing music** - Choose music that comforts rather than amplifies sadness\n8. **Get professional help if needed** - Therapy can provide valuable support\n9. **Remember emotions are temporary** - This feeling will pass\n10. **Consider what sadness is telling you** - It might point to unmet needs or values",
+            
+            "When feeling sad, try these constructive approaches:\n\n1. **Create small, achievable goals** - Even getting out of bed or taking a shower can be an achievement\n2. **Practice deep breathing** - Inhale for 4 counts, hold for 4, exhale for 6\n3. **Watch comforting media** - Choose uplifting movies or shows\n4. **Read inspiring material** - Books, poems, or quotes that offer hope\n5. **Focus on basic self-care** - Ensure you're sleeping, eating, and hydrating\n6. **Limit isolation** - While respecting your need for space, don't cut off all contact\n7. **Practice gratitude** - Even in sadness, find small things to appreciate\n8. **Use affirmations** - Repeat positive statements like 'This too shall pass'\n9. **Engage in simple pleasures** - A warm drink, soft blanket, or favorite snack\n10. **Consider creative expression** - Sometimes sadness can fuel beautiful art",
+            
+            "Constructive strategies for sadness:\n\n1. **Create a comfort kit** - Gather items that bring you comfort (photos, blankets, music)\n2. **Practice mindfulness meditation** - Observe sadness without getting lost in it\n3. **Engage in service** - Helping others can provide perspective and purpose\n4. **Limit decision-making** - When sad, postpone major decisions if possible\n5. **Use sensory grounding** - Focus on physical sensations (warmth, texture, scent)\n6. **Practice progressive muscle relaxation** - Tense and relax each muscle group\n7. **Create a routine** - Structure can provide stability during emotional storms\n8. **Write unsent letters** - Express feelings you might not be ready to share\n9. **Seek sunlight** - Natural light can help regulate mood\n10. **Be patient with yourself** - Healing happens at its own pace"
+        ],
+        
+        'anxious': [
+            "Constructive ways to manage anxiety:\n\n1. **Practice 4-7-8 breathing** - Inhale 4 counts, hold 7, exhale 8\n2. **Use the 5-4-3-2-1 grounding technique** - Engage all your senses\n3. **Write down worries** - Put them on paper and set aside 'worry time' later\n4. **Practice progressive muscle relaxation** - Systematically tense and release muscles\n5. **Challenge catastrophic thinking** - Ask 'What evidence do I have for this worry?'\n6. **Practice box breathing** - Equal inhale, hold, exhale, hold (4-4-4-4)\n7. **Use cold water** - Splash face or hold ice to reset nervous system\n8. **Focus on what you CAN control** - Let go of what you cannot\n9. **Create a 'safe space' visualization** - Imagine a peaceful place in detail\n10. **Use anxiety as information** - What might it be telling you about needs or boundaries?",
+            
+            "For anxiety relief, try:\n\n1. **Mindfulness meditation** - Practice daily, even for 5 minutes\n2. **Create a worry list** - Write worries and review only once a day\n3. **Engage in rhythmic activities** - Walking, swimming, or rocking\n4. **Limit caffeine and sugar** - These can exacerbate anxiety\n5. **Use affirmations** - Repeat 'This feeling will pass' or 'I am safe right now'\n6. **Practice acceptance** - Allow anxiety to be present without fighting it\n7. **Create structure** - Routines can reduce uncertainty\n8. **Engage in light exercise** - Movement burns off anxious energy\n9. **Use lavender or chamomile** - These herbs have calming properties\n10. **Practice gratitude** - Shift focus from worries to appreciations",
+            
+            "Constructive anxiety management:\n\n1. **Practice RAIN technique** - Recognize, Allow, Investigate, Nurture\n2. **Create an anxiety toolkit** - Gather calming items and techniques\n3. **Limit news/social media** - Reduce exposure to anxiety-provoking content\n4. **Practice self-compassion** - Be kind to yourself about anxious feelings\n5. **Use distraction techniques** - Engage in absorbing activities\n6. **Practice systematic desensitization** - Gradually face fears in small steps\n7. **Get professional support** - Therapy can provide effective strategies\n8. **Practice yoga or tai chi** - These combine movement and mindfulness\n9. **Use calming scents** - Essential oils like lavender or bergamot\n10. **Focus on the present** - Anxiety often lives in the future; bring attention to now"
+        ],
+        
+        'angry': [
+            "Constructive ways to channel anger:\n\n1. **Physical activity** - Run, box, lift weights, or do intense exercise\n2. **Write an unsent letter** - Express all your feelings without sending it\n3. **Practice deep breathing** - Before reacting, take 10 deep breaths\n4. **Use 'I feel' statements** - Communicate assertively: 'I feel ___ when ___'\n5. **Take a timeout** - Remove yourself from the situation to cool down\n6. **Identify the underlying need** - Anger often signals a boundary violation\n7. **Use physical release** - Punching bag, scream into pillow, tear paper\n8. **Practice assertive communication** - Express needs clearly and respectfully\n9. **Channel energy into projects** - Clean, organize, or create something\n10. **Consider what value is threatened** - Anger protects what matters to us",
+            
+            "For constructive anger management:\n\n1. **Count to 10 (or 100)** - Delay your response\n2. **Practice empathy** - Try to understand others' perspectives\n3. **Use humor** - Find something funny in the situation if possible\n4. **Engage in vigorous exercise** - Burn off the adrenaline\n5. **Practice mindfulness** - Observe anger without acting on it\n6. **Write a pros/cons list** - What would acting on this anger achieve?\n7. **Use relaxation techniques** - Progressive muscle relaxation or meditation\n8. **Seek perspective** - Talk to a neutral third party\n9. **Practice forgiveness** - For yourself and others\n10. **Create art** - Express the intensity through creative means",
+            
+            "Constructive anger strategies:\n\n1. **Identify triggers** - Learn what situations typically provoke your anger\n2. **Practice healthy boundaries** - Prevent anger by setting clear limits\n3. **Use 'time in'** - Stay present but calm during conflicts\n4. **Practice active listening** - Truly hear others before responding\n5. **Channel into advocacy** - Use anger to fuel positive change\n6. **Practice self-soothing** - Develop techniques that calm you\n7. **Consider consequences** - What might happen if you express anger destructively?\n8. **Practice gratitude** - Shift focus from what's wrong to what's right\n9. **Get physical distance** - Sometimes space is needed\n10. **Seek professional help** - If anger feels out of control"
+        ],
+        
+        'lonely': [
+            "Constructive ways to address loneliness:\n\n1. **Reach out to old connections** - Contact someone you haven't spoken to in a while\n2. **Join groups or classes** - Find communities around your interests\n3. **Volunteer** - Helping others creates connection and purpose\n4. **Practice self-friendship** - Be kind and compassionate to yourself\n5. **Engage in activities you enjoy** - Even alone, do what brings you pleasure\n6. **Schedule regular social interactions** - Make connection a priority\n7. **Practice mindfulness** - Be present with yourself without judgment\n8. **Get a pet or volunteer with animals** - Animal companionship can help\n9. **Attend local events** - Go to community gatherings or meetups\n10. **Use technology meaningfully** - Video calls, online communities, or pen pals",
+            
+            "For loneliness, try:\n\n1. **Practice gratitude for existing relationships** - Appreciate connections you have\n2. **Engage in creative hobbies** - Art, music, writing, or crafts\n3. **Consider what type of connection you need** - Deep friendship, casual acquaintance, or community\n4. **Balance alone time with social time** - Find your optimal balance\n5. **Practice self-disclosure** - Share appropriately to deepen connections\n6. **Join support groups** - Connect with others who understand\n7. **Practice active listening** - Deepen existing connections through attentiveness\n8. **Create social rituals** - Regular coffee dates, game nights, or walks\n9. **Limit social media comparison** - Real connections are different from curated feeds\n10. **Be patient** - Building connections takes time",
+            
+            "Constructive approaches to loneliness:\n\n1. **Journal about your feelings** - Understand your loneliness better\n2. **Practice self-compassion** - Don't judge yourself for feeling lonely\n3. **Engage in learning** - Take a course or develop a new skill\n4. **Create connection opportunities** - Host gatherings or start a group\n5. **Practice being vulnerable** - Appropriate sharing invites connection\n6. **Focus on quality over quantity** - A few deep connections matter more than many superficial ones\n7. **Engage in spiritual practice** - Connect with something larger than yourself\n8. **Practice loving-kindness meditation** - Cultivate feelings of connection\n9. **Consider professional help** - Therapy can address underlying issues\n10. **Remember loneliness is common** - You're not alone in feeling alone"
+        ],
+        
+        'tired': [
+            "Constructive ways to address tiredness:\n\n1. **Prioritize sleep hygiene** - Consistent schedule, dark room, cool temperature\n2. **Practice restorative yoga** - Gentle poses with props for support\n3. **Take short, frequent breaks** - 5-minute breaks every hour\n4. **Nourish your body** - Balanced meals, adequate hydration\n5. **Listen to your body's signals** - Rest when you need to\n6. **Practice power naps** - 20-30 minutes maximum\n7. **Stay hydrated** - Dehydration causes fatigue\n8. **Engage in light movement** - Gentle walks or stretching\n9. **Limit screen time before bed** - Blue light disrupts sleep\n10. **Create a relaxing bedtime routine** - Wind down for 30-60 minutes before sleep",
+            
+            "For fatigue management:\n\n1. **Break tasks into smaller pieces** - Make everything more manageable\n2. **Practice saying no** - Protect your energy from non-essential commitments\n3. **Spend time in nature** - Natural environments restore energy\n4. **Consider emotional roots** - Sometimes tiredness has emotional causes\n5. **Schedule rest as a priority** - Not as an afterthought\n6. **Practice breathing exercises** - Oxygenate your body\n7. **Use aromatherapy** - Peppermint or citrus scents can energize\n8. **Create energy rituals** - Morning routines that boost your day\n9. **Limit caffeine after noon** - Prevent sleep disruption\n10. **Practice acceptance** - Some days we just have less energy",
+            
+            "Constructive tiredness strategies:\n\n1. **Practice gentle movement** - Yoga, walking, or stretching\n2. **Use positive self-talk** - Encourage yourself through fatigue\n3. **Create an energizing environment** - Bright lighting, uplifting music\n4. **Practice mindfulness** - Be present with tiredness without judgment\n5. **Consider medical causes** - Rule out anemia, thyroid issues, etc.\n6. **Balance activity and rest** - Pacing prevents burnout\n7. **Practice gratitude for your body** - Appreciate what it does for you\n8. **Use cold water** - Splash face or take a cool shower\n9. **Listen to upbeat music** - Music can boost energy\n10. **Be gentle with yourself** - Rest is productive, not lazy"
+        ],
+        
+        'neutral': [
+            "Constructive ways to use neutral states:\n\n1. **Practice mindfulness and observation** - Notice your state without changing it\n2. **Engage in learning** - Read, take courses, or develop skills\n3. **Complete practical tasks** - Organization, cleaning, or administrative work\n4. **Reflect on goals and priorities** - Use clarity to plan ahead\n5. **Rest in the calm** - Enjoy peace without pressure to feel differently\n6. **Practice meditation** - Deepen your present-moment awareness\n7. **Engage in creative problem-solving** - Use mental clarity for solutions\n8. **Make decisions** - Neutral states are good for balanced choices\n9. **Plan for future needs** - Anticipate what support you might need\n10. **Practice gratitude for balance** - Appreciate emotional equilibrium",
+            
+            "For neutral moods:\n\n1. **Use this state for reflection** - Journal about recent experiences\n2. **Engage in moderate exercise** - Maintain your wellbeing\n3. **Read educational material** - Expand your knowledge\n4. **Organize your space** - Physical or digital organization\n5. **Practice gratitude for emotional balance** - Not all states need to be intense\n6. **Connect with others** - Socialize without emotional charge\n7. **Practice self-care routines** - Maintain healthy habits\n8. **Engage in hobbies** - Enjoy activities for their own sake\n9. **Plan self-care for future moods** - Prepare resources for when emotions shift\n10. **Practice acceptance** - This state has value too",
+            
+            "Constructive neutral state strategies:\n\n1. **Practice mindfulness** - Deepen awareness of the present\n2. **Engage in skill development** - Learn something new\n3. **Complete neglected tasks** - Use mental clarity for productivity\n4. **Reflect on emotional patterns** - Understand your emotional landscape\n5. **Practice self-compassion** - Accept yourself in all states\n6. **Engage in creative expression** - Without pressure to feel intensely\n7. **Connect with nature** - Appreciate the world around you\n8. **Practice breathing exercises** - Maintain calm and balance\n9. **Read inspiring material** - Gently uplift yourself\n10. **Rest in being** - Sometimes just being is enough"
+        ],
+        
+        'motivational': [
+            "Constructive ways to build motivation:\n\n1. **Start with tiny tasks** - 2-minute commitments to build momentum\n2. **Create a vision board** - Visualize your goals and dreams\n3. **Break large goals into small steps** - Make everything achievable\n4. **Find an accountability partner** - Share goals with someone\n5. **Celebrate small wins** - Acknowledge every bit of progress\n6. **Use the 5-second rule** - Act within 5 seconds of thinking about a task\n7. **Create a motivating environment** - Music, lighting, and organization\n8. **Practice positive self-talk** - Encourage yourself\n9. **Visualize success** - Imagine completing your goals\n10. **Remove distractions** - Create focus time",
+            
+            "For motivation building:\n\n1. **Set SMART goals** - Specific, Measurable, Achievable, Relevant, Time-bound\n2. **Create a reward system** - Small rewards for progress\n3. **Track progress visually** - Charts, journals, or apps\n4. **Find inspiration from role models** - Learn from others' success\n5. **Remember your 'why'** - Connect to deeper purpose\n6. **Practice self-compassion for setbacks** - Don't beat yourself up\n7. **Create routines** - Reduce decision fatigue\n8. **Use energizing music** - Create motivating playlists\n9. **Practice gratitude for progress** - Appreciate how far you've come\n10. **Break tasks into time blocks** - Work in focused intervals",
+            
+            "Constructive motivation strategies:\n\n1. **Start your day with intention** - Morning rituals that set the tone\n2. **Practice visualization** - See yourself achieving your goals\n3. **Use affirmations** - Positive statements about your capability\n4. **Create an inspiring workspace** - Environment affects motivation\n5. **Practice self-care** - Wellbeing supports motivation\n6. **Learn from failures** - See setbacks as learning opportunities\n7. **Connect with supportive people** - Surround yourself with encouragement\n8. **Practice mindfulness** - Stay present with your tasks\n9. **Use technology wisely** - Apps that track and motivate\n10. **Remember motivation follows action** - Start small, momentum builds"
         ]
     }
     
@@ -300,7 +367,7 @@ class MindTrackChatbot:
                 "energy": "low"
             }
         ],
-        # NEW: Motivational music resources (using existing sad songs for now - same URLs)
+        # NEW: Motivational music resources
         'motivational': [
             {
                 "id": "motivational_1",
@@ -333,7 +400,7 @@ class MindTrackChatbot:
         ]
     }
     
-    # Enhanced motivational quotes with variety
+    # Enhanced motivational quotes with variety - NOW INCLUDES NEPALI QUOTES
     QUOTE_CATEGORIES = {
         'motivational': [
             "Progress isn't about giant leaps, but about the small, consistent steps we take each day. What's one tiny step forward you could take right now? 💫",
@@ -382,6 +449,72 @@ class MindTrackChatbot:
             "Happiness is homemade - create some today!",
             "Let your light shine! The world needs your joy.",
             "Good vibes only! What's bringing you happiness right now?"
+        ],
+        
+        # NEW: NEPALI QUOTES
+        'nepali_motivational': [
+            "जिन्दगी सधैं अघि बढिरहन्छ, तिमी पनि अघि बढ।",
+            "आफूमा विश्वास गर, तिम्रो सपना साकार हुनेछ।",
+            "कठिनाइहरू आउँछन् र जान्छन्, तर तिम्रो हौसला सधैं रहनु पर्छ।",
+            "आजको संघर्ष भोलिको सफलताको कथा हुनेछ।",
+            "तिम्रो यात्रा अद्वितीय छ, आफ्नो गतिमा अगाडि बढ।",
+            "हार मानेर बस्नु भन्दा संघर्ष गर्दै मर्नु राम्रो।",
+            "तिम्रो भाग्य तिम्रो हातमा छ, आफैं बनाउनु पर्छ।",
+            "सपना देख्नु राम्रो हो, तर त्यो पुरा गर्न खोज्नु अझ राम्रो।",
+            "जीवन छोटो छ, आजै सुरु गर।",
+            "तिमी सक्षम छौ, तिमीले गर्न सक्छौ।"
+        ],
+        
+        'nepali_happy': [
+            "खुसी साना क्षणहरूमा बस्छ, तिनलाई महसुस गर्न सिक।",
+            "मुस्कान संक्रामक हुन्छ, आज कसैलाई मुस्कुराउन दिनुहोस्।",
+            "जीवन रमाइलो छ, प्रत्येक क्षणको आनन्द लिनुहोस्।",
+            "तिम्रो खुसीले अरूलाई पनि खुसी बनाउँछ।",
+            "आज एउटा सानो खुसी खोज्नुहोस् र त्यसलाई बडाउनुहोस्।",
+            "खुसी भित्रबाट आउँछ, बाहिरबाट खोज्नु पर्दैन।",
+            "हाँसो र खुसी सबैभन्दा ठूलो औषधि हुन्।",
+            "प्रकृतिको सौन्दर्यले मनलाई खुसी बनाउँछ।",
+            "साना साना खुसीहरू जोडेर ठूलो खुसी बनाउन सकिन्छ।",
+            "तिम्रो मुस्कान तिम्रो सबैभन्दा सुन्दर आभूषण हो।"
+        ],
+        
+        'nepali_sad': [
+            "दुःख अस्थायी हुन्छ, यो पनि बित्नेछ।",
+            "आँसुहरू मनको भारी हल्का गर्छन्।",
+            "कठिन समयहरूले हामीलाई बलियो बनाउँछन्।",
+            "अँध्यारो रात पछि उज्यालो भोलि आउँछ।",
+            "तिम्रो भावनाहरू वैध छन्, तिनलाई स्वीकार गर।",
+            "दुःख सबैले भोग्छन्, तिमी एक्लै होइनौ।",
+            "आँसु पुछेपछि दृष्टि स्पष्ट हुन्छ।",
+            "दुःखले नै सुखको महत्त्व बुझाउँछ।",
+            "कठिन समयमा आफूलाई सान्त्वना दिन सिक्नु पर्छ।",
+            "भावनाहरू बग्न दिनु पर्छ, रोक्नु हुँदैन।"
+        ],
+        
+        'nepali_calming': [
+            "शान्ति भित्रै पाइन्छ, बाहिर खोज्नु पर्दैन।",
+            "श्वासले जीवन दिन्छ, शान्ति ल्याउँछ।",
+            "मन शान्त भएको बेला सबै समाधान हराउँछन्।",
+            "धीरज र शान्ति सबैभन्दा ठूलो शक्ति हो।",
+            "वर्तमानमा बस्न सिक्नु, शान्ति त्यहीँ छ।",
+            "शान्त मनले सबै समस्या समाधान गर्छ।",
+            "प्रकृतिको शान्तिले मनलाई शान्त पार्छ।",
+            "गहिरो श्वासले तनाव हटाउँछ।",
+            "शान्तिमा बस्नु नै ध्यान हो।",
+            "मन शान्त भए जीवन सजिलो हुन्छ।"
+        ],
+        
+        'nepali_uplifting': [
+            "आशाका बादल हराउँदैनन्, तिनीहरू फेरि आउँछन्।",
+            "उज्यालो सधैं अँध्यारो पछि आउँछ।",
+            "तिम्रो आत्मविश्वास नै तिम्रो सबैभन्दा ठूलो शक्ति हो।",
+            "भोलि नयाँ सुरुवातको दिन हो।",
+            "तिमी जस्तो छौ त्यस्तै रहनु, त्यो नै सबैभन्दा राम्रो छ।",
+            "आशा नछाड्नु, आशा नै जीवन हो।",
+            "तिम्रो क्षमता अनन्त छ, विश्वास गर।",
+            "सकारात्मक सोचले जीवन बदल्छ।",
+            "आफूलाई प्रेम गर, अरु पनि तिमीलाई प्रेम गर्नेछन्।",
+            "तिम्रो भविष्य उज्यालो छ, विश्वास राख।"
         ]
     }
     
@@ -720,11 +853,12 @@ Make the hopeful, happy choice."""
             'cheer_up_context': False,
             'last_interaction': None,
             'interaction_count': 0,
-            'current_mood': None
+            'current_mood': None,
+            'last_topic': None
         }
     
     @classmethod
-    def _update_state(cls, user_message: str, response: str, mood: str = None):
+    def _update_state(cls, user_message: str, response: str, mood: str = None, topic: str = None):
         """Update conversation state"""
         cls._conversation_state['interaction_count'] += 1
         cls._conversation_state['last_interaction'] = {
@@ -736,6 +870,9 @@ Make the hopeful, happy choice."""
         if mood:
             cls._conversation_state['current_mood'] = mood
         
+        if topic:
+            cls._conversation_state['last_topic'] = topic
+        
         # Reset cheer up context UNLESS explicitly mentioned
         if 'cheer' not in user_message.lower() and 'up' not in user_message.lower():
             cls._conversation_state['cheer_up_context'] = False
@@ -744,6 +881,9 @@ Make the hopeful, happy choice."""
     def _get_fresh_quote(cls, category: str = 'motivational') -> str:
         """Get a quote that hasn't been given recently"""
         available_quotes = cls.QUOTE_CATEGORIES.get(category, cls.QUOTE_CATEGORIES['motivational'])
+        
+        if not available_quotes:
+            return "I don't have quotes in that category yet. How about a poem instead?"
         
         # Remove recently given quotes
         fresh_quotes = [q for q in available_quotes if q not in cls._conversation_state['last_quotes_given']]
@@ -773,6 +913,9 @@ Make the hopeful, happy choice."""
             available_poems = cls.POEM_CATEGORIES.get(category, cls.POEM_CATEGORIES['nepali_uplifting'])
         else:
             available_poems = cls.POEM_CATEGORIES.get(category, cls.POEM_CATEGORIES['uplifting'])
+        
+        if not available_poems:
+            return "I don't have poems in that category yet. How about a quote instead?"
         
         # Remove recently given poems
         fresh_poems = [p for p in available_poems if p not in cls._conversation_state['last_poems_given']]
@@ -818,6 +961,15 @@ Make the hopeful, happy choice."""
             cls._conversation_state['last_exercise_tips_given'] = cls._conversation_state['last_exercise_tips_given'][-5:]
         
         return selected_tip
+    
+    @classmethod
+    def _get_constructive_ways(cls, mood: str = None) -> str:
+        """Get constructive ways for a specific mood"""
+        if not mood or mood not in cls.CONSTRUCTIVE_WAYS:
+            mood = 'neutral'
+        
+        ways = cls.CONSTRUCTIVE_WAYS.get(mood, cls.CONSTRUCTIVE_WAYS['neutral'])
+        return random.choice(ways)
     
     @classmethod
     def _get_fresh_song(cls, mood: str = None, is_cheer_up: bool = False) -> Dict:
@@ -913,6 +1065,16 @@ Make the hopeful, happy choice."""
             # Use existing mood from state
             detected_mood = cls._conversation_state.get('current_mood')
         
+        # Check for follow-up to constructive ways/fear topic
+        last_topic = cls._conversation_state.get('last_topic')
+        if (last_topic in ['fear', 'overcome', 'constructive'] and 
+            any(word in user_message_lower for word in ['ways', 'methods', 'techniques', 'strategies', 'how', 'what', 'tell'])):
+            # This is a follow-up request for constructive ways
+            mood_for_ways = detected_mood or 'neutral'
+            response = cls._get_constructive_ways(mood_for_ways)
+            cls._update_state(user_message, response, mood_for_ways, 'constructive')
+            return response
+        
         # Handle "thank you" and "thanks" as farewells
         if user_message_lower in ['thank you', 'thanks', 'thank u', 'thx']:
             response = random.choice(cls.FAREWELLS)
@@ -963,95 +1125,158 @@ Make the hopeful, happy choice."""
             cls._update_state(user_message, response, detected_mood)
             return response
         
-        # FIX: Check for NEPALI poem requests FIRST - THIS IS THE CRITICAL FIX
-        if 'nepali' in user_message_lower:
-            # Determine Nepali poem category
-            # CHECK EXPLICIT REQUESTS FIRST
+        # CHECK 1: NEPALI QUOTE requests (MUST come before regular quote check)
+        if 'nepali' in user_message_lower and ('quote' in user_message_lower or 'quotes' in user_message_lower):
+            # Determine Nepali quote category
             if 'motivat' in user_message_lower:
                 category = 'nepali_motivational'
+            elif 'happy' in user_message_lower:
+                category = 'nepali_happy'
+            elif 'sad' in user_message_lower:
+                category = 'nepali_sad'
+            elif 'calm' in user_message_lower or 'peace' in user_message_lower:
+                category = 'nepali_calming'
             elif 'uplift' in user_message_lower:
                 category = 'nepali_uplifting'
-            # THEN CHECK MOOD
-            elif detected_mood == 'happy':
-                category = 'nepali_happy'
-            elif detected_mood == 'sad':
-                category = 'nepali_sad'
-            elif detected_mood == 'lonely':
-                category = 'nepali_lonely'
-            elif detected_mood in ['anxious', 'tired']:
-                category = 'nepali_calming'
-            elif detected_mood == 'motivational':
-                category = 'nepali_motivational'
             else:
                 # Default based on mood
-                if detected_mood:
+                if detected_mood == 'happy':
+                    category = 'nepali_happy'
+                elif detected_mood == 'sad':
+                    category = 'nepali_sad'
+                elif detected_mood in ['anxious', 'tired']:
                     category = 'nepali_calming'
+                elif detected_mood == 'motivational':
+                    category = 'nepali_motivational'
                 else:
                     category = 'nepali_uplifting'
             
-            # Get a fresh Nepali poem
-            poem = cls._get_fresh_poem(category)
-            
-            # Create response with appropriate intro
-            response = f"Here's a Nepali poem for you:\n\n{poem}"
-            
-            cls._update_state(user_message, response, detected_mood)
+            quote = cls._get_fresh_quote(category)
+            response = f"Here's a Nepali quote for you:\n\n\"{quote}\""
+            cls._update_state(user_message, response, detected_mood, 'quote')
             return response
         
-        # Check for poem requests (English) - MUST COME AFTER NEPALI CHECK
+        # CHECK 2: NEPALI POEM requests
+        if 'nepali' in user_message_lower and ('poem' in user_message_lower or 'poetry' in user_message_lower):
+            # Determine Nepali poem category
+            if 'motivat' in user_message_lower:
+                category = 'nepali_motivational'
+            elif 'happy' in user_message_lower:
+                category = 'nepali_happy'
+            elif 'sad' in user_message_lower:
+                category = 'nepali_sad'
+            elif 'lonely' in user_message_lower:
+                category = 'nepali_lonely'
+            elif 'calm' in user_message_lower or 'peace' in user_message_lower:
+                category = 'nepali_calming'
+            elif 'uplift' in user_message_lower:
+                category = 'nepali_uplifting'
+            else:
+                # Default based on mood
+                if detected_mood == 'happy':
+                    category = 'nepali_happy'
+                elif detected_mood == 'sad':
+                    category = 'nepali_sad'
+                elif detected_mood == 'lonely':
+                    category = 'nepali_lonely'
+                elif detected_mood in ['anxious', 'tired']:
+                    category = 'nepali_calming'
+                elif detected_mood == 'motivational':
+                    category = 'nepali_motivational'
+                else:
+                    category = 'nepali_uplifting'
+            
+            poem = cls._get_fresh_poem(category)
+            response = f"Here's a Nepali poem for you:\n\n{poem}"
+            cls._update_state(user_message, response, detected_mood, 'poem')
+            return response
+        
+        # CHECK 3: General NEPALI requests (fallback)
+        if 'nepali' in user_message_lower:
+            # Default to poem for general Nepali requests
+            if detected_mood == 'happy':
+                category = 'nepali_happy'
+            elif detected_mood == 'sad':
+                category = 'nepali_sad'
+            else:
+                category = 'nepali_uplifting'
+            
+            poem = cls._get_fresh_poem(category)
+            response = f"Here's a Nepali poem for you:\n\n{poem}"
+            cls._update_state(user_message, response, detected_mood, 'poem')
+            return response
+        
+        # CHECK 4: Constructive ways requests
+        if any(word in user_message_lower for word in ['constructive', 'ways', 'methods', 'techniques', 'strategies', 'how to', 'how do i']):
+            # Determine mood for constructive ways
+            mood_for_ways = detected_mood or cls._conversation_state.get('current_mood', 'neutral')
+            response = cls._get_constructive_ways(mood_for_ways)
+            cls._update_state(user_message, response, mood_for_ways, 'constructive')
+            return response
+        
+        # CHECK 5: Fear/overcome requests
+        if any(word in user_message_lower for word in ['fear', 'scared', 'afraid', 'overcome', 'anxiety', 'worry']):
+            # These are specific emotional support requests
+            if 'fear' in user_message_lower or 'scared' in user_message_lower or 'afraid' in user_message_lower:
+                fear_responses = [
+                    "Fear can be overwhelming, but it's also a natural protective response. Here are constructive ways to work with fear:\n\n" + 
+                    cls._get_constructive_ways('anxious'),
+                    
+                    "I hear you're dealing with fear. This emotion often points to something we care deeply about. Let me share some constructive approaches:\n\n" +
+                    cls._get_constructive_ways('anxious'),
+                    
+                    "Fear can feel paralyzing. Here are some constructive strategies to help you work through it:\n\n" +
+                    cls._get_constructive_ways('anxious')
+                ]
+                response = random.choice(fear_responses)
+            elif 'overcome' in user_message_lower:
+                response = "Overcoming challenges often starts with small, manageable steps. Here are constructive approaches:\n\n" + cls._get_constructive_ways('motivational')
+            else:
+                response = "I hear you're seeking support with emotional challenges. Here are constructive ways to work with these feelings:\n\n" + cls._get_constructive_ways('anxious')
+            
+            cls._update_state(user_message, response, 'anxious', 'fear')
+            return response
+        
+        # CHECK 6: Poem requests (English)
         if 'poem' in user_message_lower or 'poetry' in user_message_lower:
             # Determine poem category based on mood
-            # CHECK EXPLICIT REQUESTS FIRST
             if 'motivat' in user_message_lower:
                 category = 'motivational'
             elif 'uplift' in user_message_lower:
                 category = 'uplifting'
-            # THEN CHECK MOOD
-            elif detected_mood == 'happy':
+            elif 'happy' in user_message_lower:
                 category = 'happy'
-            elif detected_mood == 'sad':
+            elif 'sad' in user_message_lower:
                 category = 'sad'
-            elif detected_mood in ['anxious', 'tired']:
-                category = 'calming'
-            elif detected_mood == 'lonely':
+            elif 'lonely' in user_message_lower:
                 category = 'lonely'
-            elif detected_mood == 'motivational':
-                category = 'motivational'
+            elif 'calm' in user_message_lower or 'peace' in user_message_lower:
+                category = 'calming'
             else:
-                # Default based on mood or request
-                if detected_mood:
+                # Default based on mood
+                if detected_mood == 'happy':
+                    category = 'happy'
+                elif detected_mood == 'sad':
+                    category = 'sad'
+                elif detected_mood == 'lonely':
+                    category = 'lonely'
+                elif detected_mood in ['anxious', 'tired']:
                     category = 'calming'
+                elif detected_mood == 'motivational':
+                    category = 'motivational'
                 else:
                     category = 'uplifting'
             
-            # Get a fresh poem
             poem = cls._get_fresh_poem(category)
-            
-            # Create response with appropriate intro
-            poem_intros = {
-                'happy': "Here's a joyful poem for you:\n\n",
-                'sad': "Here's a poem that understands sadness:\n\n",
-                'motivational': "Here's an encouraging poem:\n\n",
-                'lonely': "Here's a poem about solitude:\n\n",
-                'calming': "Here's a calming poem:\n\n",
-                'uplifting': "Here's an uplifting poem:\n\n"
-            }
-            
-            intro = poem_intros.get(category, "Here's a poem for you:\n\n")
-            response = f"{intro}{poem}"
-            
-            cls._update_state(user_message, response, detected_mood)
+            response = f"Here's a poem for you:\n\n{poem}"
+            cls._update_state(user_message, response, detected_mood, 'poem')
             return response
         
-        # Check for exercise/fitness requests
+        # CHECK 7: Exercise/fitness requests
         if any(word in user_message_lower for word in ['exercise', 'workout', 'fitness', 'physical', 'activity', 'move', 'tip']):
-            # Use the detected mood from current message or state
             mood_for_exercise = detected_mood or cls._conversation_state.get('current_mood', 'neutral')
-            
-            # Get mood-appropriate exercise tip
             exercise_tip = cls._get_fresh_exercise_tip(mood_for_exercise)
             
-            # Create appropriate introduction
             exercise_intros = {
                 'happy': "To celebrate your happy mood, here's an energizing exercise idea:\n\n",
                 'sad': "For moments of sadness, gentle movement can be particularly helpful:\n\n",
@@ -1065,32 +1290,26 @@ Make the hopeful, happy choice."""
             
             intro = exercise_intros.get(mood_for_exercise, "Here's an exercise tip for you:\n\n")
             response = f"{intro}{exercise_tip}"
-            
-            cls._update_state(user_message, response, mood_for_exercise)
+            cls._update_state(user_message, response, mood_for_exercise, 'exercise')
             return response
         
-        # Check for song/music requests
+        # CHECK 8: Song/music requests
         if any(word in user_message_lower for word in ['song', 'music', 'playlist', 'youtube', 'listen']):
-            # Check if this is a cheer up request
             is_cheer_up = 'cheer' in user_message_lower and 'up' in user_message_lower
-            
-            # Use the detected mood from current message
             mood_for_song = detected_mood or cls._conversation_state.get('current_mood', 'neutral')
             
-            # For cheer up requests with sad mood, keep cheer up context
             if is_cheer_up and mood_for_song == 'sad':
                 cls._conversation_state['cheer_up_context'] = True
             else:
                 cls._conversation_state['cheer_up_context'] = False
             
-            # Get mood-appropriate resource
             response = cls._get_mood_specific_youtube_resource(mood_for_song, is_cheer_up)
-            cls._update_state(user_message, response, mood_for_song)
+            cls._update_state(user_message, response, mood_for_song, 'music')
             return response
         
-        # FIX: Check for quote requests - NOW THIS COMES AFTER NEPALI CHECK
+        # CHECK 9: Quote requests (English)
         if 'quote' in user_message_lower or 'quotes' in user_message_lower:
-            # Determine quote category based on explicit request
+            # Determine quote category
             if 'motivational' in user_message_lower or 'motivate' in user_message_lower:
                 category = 'motivational'
             elif 'sad' in user_message_lower or 'emotional' in user_message_lower:
@@ -1110,83 +1329,20 @@ Make the hopeful, happy choice."""
                 else:
                     category = 'mindfulness'
             
-            # Check if asking for "another" quote
-            if 'another' in user_message_lower or 'more' in user_message_lower or 'different' in user_message_lower:
-                quote = cls._get_fresh_quote(category)
-                response = f"Here's another thought for you:\n\n\"{quote}\""
-            else:
-                quote = cls._get_fresh_quote(category)
-                response = f"Here's a perspective that might resonate:\n\n\"{quote}\""
-            
-            cls._update_state(user_message, response, detected_mood)
+            quote = cls._get_fresh_quote(category)
+            response = f"Here's a quote for you:\n\n\"{quote}\""
+            cls._update_state(user_message, response, detected_mood, 'quote')
             return response
         
-        # Check for "what should I do" requests
+        # CHECK 10: "what should I do" requests
         if 'what should i do' in user_message_lower or 'what to do' in user_message_lower or 'what do i do' in user_message_lower:
-            # Determine response based on mood
-            if detected_mood == 'sad':
-                responses = [
-                    "When feeling sad, gentle self-care activities can help. Would you like exercise tips, soothing music, or a comforting poem?",
-                    "For sadness, consider gentle movement, expressing your feelings through writing, or connecting with supportive resources.",
-                    "Sadness often responds well to gentle activities. I can suggest exercises, music, or other supportive approaches."
-                ]
-            elif detected_mood == 'anxious':
-                responses = [
-                    "For anxiety, grounding exercises can help. Would you like breathing techniques, calming music, or gentle movement suggestions?",
-                    "When anxious, focusing on the present moment helps. I can suggest mindfulness exercises or calming activities.",
-                    "Anxiety responds well to structure. Would you like a specific exercise, grounding technique, or soothing resource?"
-                ]
-            elif detected_mood == 'angry':
-                responses = [
-                    "Anger can be channeled constructively. Would you like exercise suggestions, calming techniques, or expressive activities?",
-                    "For anger, physical movement or creative expression can help. I can suggest appropriate exercises or activities.",
-                    "Angry energy needs safe expression. Would you like exercise tips, breathing techniques, or other constructive outlets?"
-                ]
-            elif detected_mood == 'tired':
-                responses = [
-                    "When tired, gentle restoration is key. Would you like restful exercises, calming music, or tips for energy renewal?",
-                    "Fatigue calls for gentle care. I can suggest low-energy activities, restful resources, or gentle movement.",
-                    "For tiredness, consider restorative activities. Would you like gentle exercise tips or calming suggestions?"
-                ]
-            else:
-                responses = [
-                    "I have several supportive options. Would you like exercise tips, mood-appropriate music, an inspiring poem, or a thoughtful quote?",
-                    "Let me offer you some supportive choices: exercise suggestions, music, poems, or quotes tailored to your current state.",
-                    "I can help with various supportive resources. Would you prefer exercise tips, musical support, poetic inspiration, or motivational quotes?"
-                ]
-            
-            response = random.choice(responses)
-            cls._update_state(user_message, response, detected_mood)
+            # Offer constructive ways based on mood
+            mood_for_help = detected_mood or cls._conversation_state.get('current_mood', 'neutral')
+            response = "Here are some constructive approaches for your current state:\n\n" + cls._get_constructive_ways(mood_for_help)
+            cls._update_state(user_message, response, mood_for_help, 'constructive')
             return response
         
-        # Check for specific emotional support questions (NEW FIX)
-        if any(word in user_message_lower for word in ['fear', 'scared', 'afraid', 'overcome', 'anxiety', 'worry']):
-            # These should trigger specific responses, not mood-based responses
-            if 'fear' in user_message_lower or 'scared' in user_message_lower or 'afraid' in user_message_lower:
-                fear_responses = [
-                    "Fear can be overwhelming, but it's also a natural protective response. Would you like to explore specific techniques for managing fear, or talk about what's triggering it? 🛡️",
-                    "I hear you're dealing with fear. This emotion often points to something we care deeply about. Let's explore constructive ways to work with this feeling.",
-                    "Fear can feel paralyzing. Sometimes breaking it down into smaller, manageable pieces helps. What's the specific fear that's coming up for you?",
-                    "When facing fear, grounding exercises can be helpful. Would you like to try a breathing technique or a mindfulness exercise to help calm your nervous system?",
-                    "Fear is often about anticipating future threats. Bringing your attention to the present moment can help reduce its intensity. Let's explore some present-focused strategies."
-                ]
-                response = random.choice(fear_responses)
-            elif 'overcome' in user_message_lower:
-                overcome_responses = [
-                    "Overcoming challenges often starts with small, manageable steps. What specific area would you like to focus on overcoming? 🌱",
-                    "The desire to overcome something shows your resilience! Let's explore practical strategies and supportive resources for your specific challenge.",
-                    "Overcoming obstacles is a process. Would you like to break down what you're facing into smaller, more manageable pieces?",
-                    "I'm here to support you in overcoming challenges. Let's start by identifying what resources or strategies might be most helpful for your situation."
-                ]
-                response = random.choice(overcome_responses)
-            else:
-                # Default response for emotional support questions
-                response = "I hear you're seeking support with emotional challenges. Let's explore what specific strategies or resources might be most helpful for you right now. 💭"
-            
-            cls._update_state(user_message, response, 'anxious')  # Set mood to anxious for these questions
-            return response
-        
-        # Check for cheer up requests
+        # CHECK 11: Cheer up requests
         if 'cheer' in user_message_lower and 'up' in user_message_lower:
             cls._conversation_state['cheer_up_context'] = True
             
@@ -1197,10 +1353,10 @@ Make the hopeful, happy choice."""
                 response = "I'd be happy to help cheer you up! "
                 response += cls._get_mood_specific_youtube_resource(detected_mood or 'neutral', True)
             
-            cls._update_state(user_message, response, detected_mood)
+            cls._update_state(user_message, response, detected_mood, 'cheer')
             return response
         
-        # Mood-based responses - ONLY if no other conditions matched
+        # CHECK 12: Mood-based responses
         if detected_mood and detected_mood in cls.MOOD_RESPONSES:
             cls._conversation_state['current_mood'] = detected_mood
             if detected_mood == 'sad':
@@ -1212,14 +1368,13 @@ Make the hopeful, happy choice."""
                 responses = cls.MOOD_RESPONSES[detected_mood]
             
             response = random.choice(responses)
-            
-            cls._update_state(user_message, response, detected_mood)
+            cls._update_state(user_message, response, detected_mood, 'mood')
             return response
         
         # Default empathetic responses
         empathetic_responses = [
             "Thank you for sharing that with me. I'm listening with care and attention. 🤗",
-            "I hear you. Would you like to explore this further, or would supportive resources be more helpful right now? 💭",
+            "I hear you. Would you like to explore constructive ways to work with what you're feeling?",
             "That sounds important. How is this sitting with you emotionally and physically?",
             "I'm fully present with what you're sharing. Your experience matters here. 💫",
             "Thank you for being open with me. Let's proceed in whatever way feels most supportive for you. 🌟"
@@ -1248,7 +1403,7 @@ Make the hopeful, happy choice."""
         if 'sad' in text_lower or 'unhappy' in text_lower:
             return 'sad'
         
-        # NEW: Add motivational mood detection (only if no emotional mood detected)
+        # Add motivational mood detection
         if 'motivat' in text_lower or 'inspire' in text_lower or 'encourag' in text_lower or 'overcome' in text_lower:
             return 'motivational'
         

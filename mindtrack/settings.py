@@ -95,12 +95,12 @@ DATABASES = {
         'PASSWORD': os.getenv('DB_PASSWORD', ''),
         'HOST': os.getenv('DB_HOST', 'localhost'),
         'PORT': os.getenv('DB_PORT', '5432'),
-        'OPTIONS': {
-            'client_encoding': 'UTF8',
-        },
-        'CONN_MAX_AGE': 600,  # Optional: keep database connections alive for 10 minutes
+        #'OPTIONS': {
+         #   'client_encoding': 'UTF8',
+        # },
+        #'CONN_MAX_AGE': 600,  # Optional: keep database connections alive for 10 minutes
     }
-}
+}   
 
 
 # Password validation
