@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Analysis History - MindTrack{% endblock %}
+
+{% block content %}
+<div class="history-container">
+    <header class="history-header">
+        <h1><i class="fas fa-history"></i> Mood Analysis History</h1>
+        <div class="header-actions">
+            <a href="{% url 'dashboard' %}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </header>
+
+    <div class="history-stats">
+        <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-content">
+                <h3>Total Analyses</h3>
+                <p class="stat-number">{{ total_analyses }}</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-content">
+                <h3>Free Remaining</h3>
+                <p class="stat-number">{{ free_analyses_remaining }}/3</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-content">
+                <h3>This Month</h3>
+                <p class="stat-number">0</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="history-content">
+        {% if analyses %}
+        <div class="analyses-list">
+            {% for analysis in analyses %}
+            <div class="analysis-card">
+                <div class="analysis-header">
+                    <div class="mood-badge mood-{{ analysis.detected_mood }}">
+                        {{ analysis.get_detected_mood_display }}
+                    </div>
+                    <div class="analysis-date">
+                        {{ analysis.created_at|date:"F j, Y, g:i a" }}
+                    </div>
+                </div>
+                <div class="analysis-text">
+                    <p>{{ analysis.text }}</p>
+                </div>
+                <div class="analysis-details">
+                    <span class="confidence">Confidence: {{ analysis.confidence|floatformat:0 }}%</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-history">
+            <div class="empty-icon">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <h3>No Analysis History Yet</h3>
+            <p>Your mood analyses will appear here after you use the analyzer.</p>
+            <a href="{% url 'dashboard' %}" class="btn-analyze-now">
+                <i class="fas fa-brain"></i> Analyze Your First Mood
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .history-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    
+    .history-header h1 {
+        color: #0a1931;
+        font-size: 28px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .btn-back {
+        background: #0a1931;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+    }
+    
+    .btn-back:hover {
+        background: #1a2c4d;
+        transform: translateY(-2px);
+    }
+    
+    .history-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .stat-icon {
+        font-size: 32px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #d4af37, #f4e4a6);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #0a1931;
+    }
+    
+    .stat-content h3 {
+        font-size: 14px;
+        color: #718096;
+        margin-bottom: 5px;
+    }
+    
+    .stat-number {
+        font-size: 24px;
+        font-weight: 700;
+        color: #0a1931;
+    }
+    
+    .empty-history {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    .empty-icon {
+        font-size: 60px;
+        color: #d4af37;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+    
+    .empty-history h3 {
+        color: #0a1931;
+        margin-bottom: 10px;
+    }
+    
+    .empty-history p {
+        color: #718096;
+        margin-bottom: 30px;
+    }
+    
+    .btn-analyze-now {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, #d4af37, #f4e4a6);
+        color: #0a1931;
+        padding: 15px 30px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    
+    .btn-analyze-now:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+    }
+    
+    .analysis-card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid #d4af37;
+    }
+    
+    .analysis-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .mood-badge {
+        padding: 6px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        color: white;
+    }
+    
+    .mood-happy { background: #38a169; }
+    .mood-sad { background: #4299e1; }
+    .mood-angry { background: #e53e3e; }
+    .mood-fear { background: #ed8936; }
+    .mood-neutral { background: #a0aec0; }
+    .mood-surprise { background: #9f7aea; }
+    
+    .analysis-date {
+        color: #a0aec0;
+        font-size: 14px;
+    }
+    
+    .analysis-text p {
+        color: #4a5568;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+    
+    .confidence {
+        display: inline-block;
+        background: rgba(56, 161, 105, 0.1);
+        color: #38a169;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
