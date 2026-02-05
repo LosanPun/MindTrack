@@ -1,0 +1,4 @@
+D:
+cd "D:\Apple\PostgreSQL\18.1\bin"
+pg_ctl -D "D:\Apple\PostgreSQL\data" start
+pg_isready
