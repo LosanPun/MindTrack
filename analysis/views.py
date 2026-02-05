@@ -148,3 +148,4 @@ def history_view(request):
         'total_analyses': 0,
         'free_analyses_remaining': 3,
     })
+    
