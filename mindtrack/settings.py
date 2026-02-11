@@ -100,7 +100,7 @@ DATABASES = {
         # },
         #'CONN_MAX_AGE': 600,  # Optional: keep database connections alive for 10 minutes
     }
-}   
+}
 
 
 # Password validation

@@ -25,7 +25,7 @@ class UserChatSession(models.Model):
     conversation_topic = models.CharField(max_length=100, blank=True, null=True)
     interaction_count = models.IntegerField(default=0)
     context_data = models.JSONField(default=dict)
-    created_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
