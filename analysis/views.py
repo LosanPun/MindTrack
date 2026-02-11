@@ -5,9 +5,15 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib import messages
+from django.db.models import Count
+from django.db.models.functions import TruncDate
+from django.utils import timezone
+from collections import defaultdict
+from datetime import datetime, timedelta
 import json
 import random
-from datetime import datetime
+
+from .models import MoodAnalysis
 
 @login_required
 def analyze_text_view(request):
@@ -152,19 +158,12 @@ def history_view(request):
 @login_required
 def analytics_view(request):
     """View mood analytics with pie chart and trends"""
-    from .models import MoodAnalysis
-    from django.db.models import Count
-    from django.db.models.functions import TruncDate
-    from collections import defaultdict
-
     # Pie chart data: mood distribution
     mood_counts = MoodAnalysis.objects.filter(user=request.user).values('detected_mood').annotate(count=Count('detected_mood')).order_by('-count')
     pie_labels = [item['detected_mood'].capitalize() for item in mood_counts]
     pie_data = [item['count'] for item in mood_counts]
 
     # Trends data: mood counts over time (last 30 days)
-    from datetime import timedelta
-    from django.utils import timezone
     thirty_days_ago = timezone.now() - timedelta(days=30)
     trend_data = MoodAnalysis.objects.filter(
         user=request.user,
