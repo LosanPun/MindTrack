@@ -8,8 +8,7 @@ import json
 import traceback
 
 from .services import MindTrackChatbot
-from .models import ChatMessage
-# from .models import UserChatSession
+from .models import ChatMessage, UserChatSession
 
 from django.utils import timezone
 import pytz
