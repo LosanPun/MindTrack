@@ -211,6 +211,8 @@ def analytics_view(request):
 @csrf_exempt
 def save_analysis_ajax(request):
     """AJAX endpoint to save mood analysis"""
+    from .models import MoodAnalysis
+
     try:
         data = json.loads(request.body)
         text = data.get('text', '').strip()
