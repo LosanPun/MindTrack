@@ -1,6 +1,7 @@
 # chatbot/models.py
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class ChatMessage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_messages')
@@ -22,7 +23,7 @@ class UserChatSession(models.Model):
     current_mood = models.CharField(max_length=50, blank=True, null=True)
     last_interaction = models.DateTimeField(blank=True, null=True)
     interaction_count = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
