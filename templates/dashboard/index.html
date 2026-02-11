@@ -193,7 +193,7 @@ Example: 'I had a great day today! Everything went well at work and I feel reall
                         <i class="fas fa-history"></i>
                         <span>View Full History</span>
                     </a>
-                    <a href="#" class="action-item" onclick="showAnalytics()">
+                    <a href="{% url 'analysis:analytics' %}" class="action-item">
                         <i class="fas fa-chart-bar"></i>
                         <span>View Analytics</span>
                     </a>
@@ -1300,16 +1300,53 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveResultBtn = document.getElementById('saveResultBtn');
     if (saveResultBtn) {
         saveResultBtn.addEventListener('click', function() {
+            // Get current analysis data
+            const currentData = {
+                text: moodInput.value.trim(),
+                mood_key: document.getElementById('resultMood').textContent.toLowerCase(),
+                confidence: document.getElementById('resultConfidence').querySelector('.confidence-value').textContent,
+                emotions: {} // Will be populated from emotion bars
+            };
+
+            // Get emotion data from bars
+            document.querySelectorAll('.emotion-bar').forEach(bar => {
+                const label = bar.querySelector('.emotion-label').textContent.toLowerCase();
+                const percent = bar.querySelector('.emotion-percent').textContent;
+                currentData.emotions[label] = percent;
+            });
+
             this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             this.disabled = true;
-            
-            setTimeout(() => {
-                this.innerHTML = '<i class="fas fa-check"></i> Saved!';
+
+            // Send AJAX request to save
+            fetch('/analysis/save-analysis-ajax/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+                },
+                body: JSON.stringify(currentData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.innerHTML = '<i class="fas fa-check"></i> Saved!';
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="fas fa-save"></i> Save to History';
+                        this.disabled = false;
+                    }, 2000);
+                } else {
+                    throw new Error(data.error || 'Save failed');
+                }
+            })
+            .catch(error => {
+                console.error('Save error:', error);
+                this.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Save Failed';
                 setTimeout(() => {
                     this.innerHTML = '<i class="fas fa-save"></i> Save to History';
                     this.disabled = false;
                 }, 2000);
-            }, 1000);
+            });
         });
     }
     
