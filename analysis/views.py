@@ -148,4 +148,100 @@ def history_view(request):
         'total_analyses': 0,
         'free_analyses_remaining': 3,
     })
+
+@login_required
+def analytics_view(request):
+    """View mood analytics with pie chart and trends"""
+    from .models import MoodAnalysis
+    from django.db.models import Count
+    from django.db.models.functions import TruncDate
+    from collections import defaultdict
+
+    # Pie chart data: mood distribution
+    mood_counts = MoodAnalysis.objects.filter(user=request.user).values('detected_mood').annotate(count=Count('detected_mood')).order_by('-count')
+    pie_labels = [item['detected_mood'].capitalize() for item in mood_counts]
+    pie_data = [item['count'] for item in mood_counts]
+
+    # Trends data: mood counts over time (last 30 days)
+    from datetime import timedelta
+    from django.utils import timezone
+    thirty_days_ago = timezone.now() - timedelta(days=30)
+    trend_data = MoodAnalysis.objects.filter(
+        user=request.user,
+        created_at__gte=thirty_days_ago
+    ).annotate(
+        date=TruncDate('created_at')
+    ).values('date', 'detected_mood').annotate(count=Count('id')).order_by('date')
+
+    # Organize trend data by date
+    date_moods = defaultdict(lambda: defaultdict(int))
+    for item in trend_data:
+        date_moods[item['date']][item['detected_mood']] += item['count']
+
+    # Prepare data for line chart: dates and mood counts
+    dates = sorted(date_moods.keys())
+    moods = ['happy', 'sad', 'angry', 'fear', 'neutral', 'surprise']
+    trend_datasets = []
+    colors = {
+        'happy': '#FFD700',
+        'sad': '#4169E1',
+        'angry': '#DC143C',
+        'fear': '#8A2BE2',
+        'neutral': '#808080',
+        'surprise': '#FF69B4'
+    }
+    for mood in moods:
+        data = [date_moods[date].get(mood, 0) for date in dates]
+        trend_datasets.append({
+            'label': mood.capitalize(),
+            'data': data,
+            'borderColor': colors.get(mood, '#000000'),
+            'fill': False,
+        })
+
+    return render(request, 'analysis/analytics.html', {
+        'pie_labels': json.dumps(pie_labels),
+        'pie_data': json.dumps(pie_data),
+        'trend_labels': json.dumps([date.strftime('%Y-%m-%d') for date in dates]),
+        'trend_datasets': json.dumps(trend_datasets),
+    })
+
+@login_required
+@require_POST
+@csrf_exempt
+def save_analysis_ajax(request):
+    """AJAX endpoint to save mood analysis"""
+    try:
+        data = json.loads(request.body)
+        text = data.get('text', '').strip()
+        detected_mood = data.get('mood_key', '')
+        confidence = data.get('confidence', 0.0)
+        emotions = data.get('emotions', {})
+
+        if not text or not detected_mood:
+            return JsonResponse({
+                'success': False,
+                'error': 'Missing required data'
+            })
+
+        # Save to database
+        analysis = MoodAnalysis.objects.create(
+            user=request.user,
+            text=text,
+            detected_mood=detected_mood,
+            confidence=float(confidence.strip('%')) / 100,
+            emotions=emotions
+        )
+
+        return JsonResponse({
+            'success': True,
+            'analysis_id': analysis.id,
+            'message': 'Analysis saved successfully'
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
     
