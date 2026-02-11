@@ -5,8 +5,9 @@ from django.contrib.auth.models import User
 class ChatMessage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_messages')
     message = models.TextField()
-    is_user = models.BooleanField(default=True)  # True if user, False if bot
-    mood_context = models.CharField(max_length=20, blank=True, null=True)
+    is_user = models.BooleanField(default=True)
+    mood_context = models.CharField(max_length=50, blank=True, null=True)
+    intent_detected = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
@@ -15,48 +16,3 @@ class ChatMessage(models.Model):
     def __str__(self):
         sender = "User" if self.is_user else "Bot"
         return f"{self.user.username} - {sender}: {self.message[:50]}"
-    
-
-class Subscription(models.Model):
-    PLAN_CHOICES = (
-        ('free', 'Free'),
-        ('premium', 'Premium'),
-    )
-
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    plan = models.CharField(max_length=10, choices=PLAN_CHOICES, default='free')
-    mood_analysis_used = models.IntegerField(default=0)
-    is_active = models.BooleanField(default=False)
-    subscribed_on = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.user.username} - {self.plan}"
-
-
-class MoodEntry(models.Model):
-    MOOD_CHOICES = (
-        ('happy', 'Happy'),
-        ('sad', 'Sad'),
-        ('neutral', 'Neutral'),
-        ('angry', 'Angry'),
-        ('anxious', 'Anxious'),
-        ('stressed', 'Stressed'),
-    )
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    text = models.TextField()
-    detected_mood = models.CharField(max_length=20, choices=MOOD_CHOICES)
-    confidence_score = models.FloatField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.user.username} - {self.detected_mood} ({self.created_at.date()})"
-
-
-class TestModel(models.Model):
-    name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name
-    
-    
