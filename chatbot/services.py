@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import List, Dict, Optional, Tuple
 from collections import Counter
 
-from .models import UserChatSession
+# from .models import UserChatSession
 from . import data_resources as resources
 
 class MindTrackChatbot:
