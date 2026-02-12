@@ -1,0 +1,412 @@
+/* Theme Variables */
+:root {
+  /* Light Theme (Default) */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7fafc;
+  --bg-tertiary: #e2e8f0;
+  --bg-header: linear-gradient(135deg, #0a1931, #1a2c4d);
+  --bg-card: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-input: #ffffff;
+  --bg-button: linear-gradient(135deg, #d4af37, #f4e4a6);
+  --bg-button-hover: linear-gradient(135deg, #f4e4a6, #d4af37);
+  --bg-upgrade: linear-gradient(135deg, #0a1931, #1a2c4d);
+
+  --text-primary: #0a1931;
+  --text-secondary: #4a5568;
+  --text-muted: #718096;
+  --text-accent: #d4af37;
+  --text-white: #ffffff;
+  --text-button: #0a1931;
+
+  --border-color: #e2e8f0;
+  --border-light: rgba(212, 175, 55, 0.3);
+  --border-white: rgba(255, 255, 255, 0.2);
+
+  --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 10px 20px rgba(212, 175, 55, 0.3);
+
+  --mood-happy: #38a169;
+  --mood-sad: #4299e1;
+  --mood-angry: #e53e3e;
+  --mood-fear: #ed8936;
+  --mood-neutral: #a0aec0;
+  --mood-surprise: #9f7aea;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --bg-primary: #1a202c;
+  --bg-secondary: #2d3748;
+  --bg-tertiary: #4a5568;
+  --bg-header: linear-gradient(135deg, #2d3748, #4a5568);
+  --bg-card: #2d3748;
+  --bg-sidebar: #2d3748;
+  --bg-input: #4a5568;
+  --bg-button: linear-gradient(135deg, #d4af37, #f4e4a6);
+  --bg-button-hover: linear-gradient(135deg, #f4e4a6, #d4af37);
+  --bg-upgrade: linear-gradient(135deg, #2d3748, #4a5568);
+
+  --text-primary: #f7fafc;
+  --text-secondary: #e2e8f0;
+  --text-muted: #a0aec0;
+  --text-accent: #d4af37;
+  --text-white: #f7fafc;
+  --text-button: #0a1931;
+
+  --border-color: #4a5568;
+  --border-light: rgba(212, 175, 55, 0.3);
+  --border-white: rgba(255, 255, 255, 0.2);
+
+  --shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 10px 20px rgba(212, 175, 55, 0.3);
+
+  --mood-happy: #48bb78;
+  --mood-sad: #63b3ed;
+  --mood-angry: #fc8181;
+  --mood-fear: #f6ad55;
+  --mood-neutral: #cbd5e0;
+  --mood-surprise: #b794f6;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  background: var(--bg-button);
+  border: 2px solid var(--border-light);
+  color: var(--text-button);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.theme-toggle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--text-accent), #f4e4a6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 50%;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+}
+
+.theme-toggle:hover::before {
+  opacity: 0.1;
+}
+
+.theme-toggle:active {
+  transform: translateY(0) scale(0.95);
+}
+
+.theme-toggle i {
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+  z-index: 1;
+}
+
+.theme-toggle.dark-mode i {
+  transform: rotate(180deg);
+}
+
+/* Animation for theme transition */
+.theme-transition {
+  animation: themeFade 0.3s ease-in-out;
+}
+
+@keyframes themeFade {
+  0% { opacity: 0.8; }
+  50% { opacity: 0.9; }
+  100% { opacity: 1; }
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+/* Apply theme variables to existing styles */
+.dashboard-container {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.dashboard-header {
+  background: var(--bg-header);
+  color: var(--text-white);
+}
+
+.stat-card {
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.analysis-section,
+.sidebar-section {
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+}
+
+.mood-input {
+  background: var(--bg-input);
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.mood-input:focus {
+  border-color: var(--text-accent);
+}
+
+.mood-results {
+  background: var(--bg-secondary);
+}
+
+.mood-result-card {
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+}
+
+.btn-analyze {
+  background: var(--bg-button);
+  color: var(--text-button);
+}
+
+.btn-analyze:hover:not(:disabled) {
+  background: var(--bg-button-hover);
+  box-shadow: var(--shadow-hover);
+}
+
+.btn-clear {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 2px solid var(--border-color);
+}
+
+.btn-clear:hover {
+  background: var(--border-color);
+}
+
+.btn-save,
+.btn-share {
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 2px solid var(--border-color);
+}
+
+.btn-save:hover {
+  background: var(--bg-primary);
+}
+
+.btn-share:hover {
+  background: var(--border-color);
+}
+
+.history-item {
+  background: var(--bg-secondary);
+}
+
+.history-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.action-item {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.action-item:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.upgrade-section {
+  background: var(--bg-upgrade);
+  color: var(--text-white);
+}
+
+.btn-upgrade:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.alert-success {
+  background-color: rgba(72, 187, 120, 0.1);
+  color: var(--mood-happy);
+  border: 1px solid rgba(72, 187, 120, 0.2);
+}
+
+.alert-error {
+  background-color: rgba(252, 129, 129, 0.1);
+  color: var(--mood-angry);
+  border: 1px solid rgba(252, 129, 129, 0.2);
+}
+
+.error-message {
+  background: rgba(252, 129, 129, 0.1);
+  color: var(--mood-angry);
+  border: 1px solid rgba(252, 129, 129, 0.2);
+}
+
+.mood-happy { background: var(--mood-happy); }
+.mood-sad { background: var(--mood-sad); }
+.mood-angry { background: var(--mood-angry); }
+.mood-fear { background: var(--mood-fear); }
+.mood-neutral { background: var(--mood-neutral); }
+.mood-surprise { background: var(--mood-surprise); }
+
+.emotion-progress {
+  background: var(--border-color);
+}
+
+.detail-label {
+  color: var(--text-muted);
+}
+
+.detail-value {
+  color: var(--text-primary);
+}
+
+.placeholder-text {
+  color: var(--text-muted);
+}
+
+.placeholder-hint {
+  color: var(--border-color);
+}
+
+.section-header h2 {
+  color: var(--text-primary);
+}
+
+.section-header p {
+  color: var(--text-muted);
+}
+
+.sidebar-section h3 {
+  color: var(--text-primary);
+}
+
+.view-all {
+  color: var(--text-accent);
+}
+
+.view-all:hover {
+  text-decoration: underline;
+}
+
+.character-count {
+  color: var(--text-muted);
+}
+
+.confidence-badge {
+  background: rgba(72, 187, 120, 0.1);
+  color: var(--mood-happy);
+}
+
+.emotion-chart h5 {
+  color: var(--text-secondary);
+}
+
+.emotion-label {
+  color: var(--text-secondary);
+}
+
+.emotion-percent {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.mood-header h4 {
+  color: var(--text-primary);
+}
+
+.history-text {
+  color: var(--text-secondary);
+}
+
+.history-time {
+  color: var(--text-muted);
+}
+
+.no-history {
+  color: var(--text-muted);
+}
+
+.upgrade-section h3 {
+  color: var(--text-white);
+}
+
+.upgrade-section p {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.btn-logout {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-white);
+  border: 1px solid var(--border-white);
+}
+
+.btn-logout:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.free-counter {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-light);
+}
+
+.free-counter strong {
+  color: var(--text-accent);
+}
+
+.stat-icon {
+  background: linear-gradient(135deg, var(--text-accent), #f4e4a6);
+}
+
+.stat-content h3 {
+  color: var(--text-muted);
+}
+
+.stat-number {
+  color: var(--text-primary);
+}
+
+.user-welcome h1 {
+  background: linear-gradient(90deg, var(--text-white), var(--text-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.user-welcome p {
+  opacity: 0.8;
+}
+
+.mood-emoji {
+  background: linear-gradient(135deg, var(--text-accent), #f4e4a6);
+}
+
+.btn-upgrade {
+  background: var(--bg-button);
+  color: var(--text-button);
+}
