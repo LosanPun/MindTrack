@@ -201,10 +201,10 @@ Example: 'I had a great day today! Everything went well at work and I feel reall
                         <i class="fas fa-robot"></i>
                         <span>Chat with AI</span>
                     </a>
-                    <a href="#" class="action-item" onclick="exportData()">
+                    <button id="exportBtn" class="action-item export-btn">
                         <i class="fas fa-download"></i>
                         <span>Export Data</span>
-                    </a>
+                    </button>
                 </div>
             </div>
             
@@ -225,6 +225,7 @@ Example: 'I had a great day today! Everything went well at work and I feel reall
 {% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/themes.css' %}">
 <style>
     /* Dashboard Styles */
     .dashboard-container {
@@ -903,6 +904,7 @@ Example: 'I had a great day today! Everything went well at work and I feel reall
 {% endblock %}
 
 {% block extra_js %}
+<script src="{% static 'js/theme.js' %}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // DOM Elements
@@ -1363,6 +1365,34 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('AI Chat companion will be implemented soon!');
     }
     
+    // Export Data button
+    const exportBtn = document.getElementById('exportBtn');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', function() {
+            // Show loading state
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Generating PDF...</span>';
+            this.disabled = true;
+
+            // Create a temporary link to trigger download
+            const link = document.createElement('a');
+            link.href = '{% url "analysis:export_pdf" %}';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+
+            // Trigger download
+            link.click();
+
+            // Clean up
+            document.body.removeChild(link);
+
+            // Reset button state after a delay
+            setTimeout(() => {
+                this.innerHTML = '<i class="fas fa-download"></i> <span>Export Data</span>';
+                this.disabled = false;
+            }, 2000);
+        });
+    }
+
     function exportData() {
         alert('Data export feature coming soon!');
     }

@@ -10,4 +10,5 @@ urlpatterns = [
     path('save-analysis-ajax/', views.save_analysis_ajax, name='save_analysis_ajax'),
     path('history/', views.history_view, name='history'),
     path('analytics/', views.analytics_view, name='analytics'),
+    path('export-pdf/', views.export_data_pdf, name='export_pdf'),
 ]

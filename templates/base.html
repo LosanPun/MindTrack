@@ -8,9 +8,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    {% if user.is_authenticated %}
+    <link rel="stylesheet" href="{% static 'css/themes.css' %}">
+    {% endif %}
     {% block extra_css %}{% endblock %}
 </head>
-<body class="{% block body_class %}{% endblock %}">
+<body class="{% block body_class %}{% endblock %}" data-theme="{% if user.is_authenticated %}{{ request.session.theme|default:'light' }}{% endif %}">
     {% block content %}
     <!-- Content goes here -->
     {% endblock %}

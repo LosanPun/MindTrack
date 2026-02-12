@@ -5,6 +5,11 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+import json
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(
@@ -16,18 +21,11 @@ class CustomUserCreationForm(UserCreationForm):
             'id': 'id_email'
         })
     )
-    
+
     class Meta:
         model = User
-        fields = ("username", "email", "password1", "password2")
-        widgets = {
-            'username': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Choose a username',
-                'id': 'id_username'
-            }),
-        }
-    
+        fields = ("email", "password1", "password2")
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password1'].widget.attrs.update({
@@ -40,15 +38,16 @@ class CustomUserCreationForm(UserCreationForm):
             'placeholder': 'Confirm password',
             'id': 'id_password2'
         })
-    
+
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("This email is already registered.")
         return email
-    
+
     def save(self, commit=True):
         user = super().save(commit=False)
+        user.username = self.cleaned_data["email"]
         user.email = self.cleaned_data["email"]
         if commit:
             user.save()
@@ -95,7 +94,7 @@ def login_view(request):
     else:
         form = CustomAuthenticationForm()
     
-    return render(request, 'accounts/login.html', {
+    return render(request, 'account/login.html', {
         'form': form,
         'registration_form': CustomUserCreationForm()
     })
@@ -106,18 +105,38 @@ def register_view(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            
+
             # Auto-login after registration
             login(request, user)
-            
+
             messages.success(request, f'Account created successfully! Welcome to MindTrack, {user.username}.')
             return redirect('dashboard')
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
         form = CustomUserCreationForm()
-    
-    return render(request, 'accounts/login.html', {
+
+    return render(request, 'account/login.html', {
         'registration_form': form,
         'form': CustomAuthenticationForm()
     })
+
+@login_required
+@require_POST
+@csrf_exempt
+def set_theme(request):
+    """AJAX endpoint to set user theme preference"""
+    try:
+        data = json.loads(request.body)
+        theme = data.get('theme', 'light')
+
+        if theme not in ['light', 'dark']:
+            return JsonResponse({'success': False, 'error': 'Invalid theme'})
+
+        # Store theme in session
+        request.session['theme'] = theme
+
+        return JsonResponse({'success': True})
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})

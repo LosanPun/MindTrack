@@ -21,9 +21,17 @@ class ChatMessage(models.Model):
 class UserChatSession(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='chat_session')
     current_mood = models.CharField(max_length=50, blank=True, null=True)
+<<<<<<< HEAD
     last_interaction = models.DateTimeField(blank=True, null=True)
     interaction_count = models.IntegerField(default=0)
     created_at = models.DateTimeField(default=timezone.now)
+=======
+    last_intent = models.CharField(max_length=50, blank=True, null=True)
+    conversation_topic = models.CharField(max_length=100, blank=True, null=True)
+    interaction_count = models.IntegerField(default=0)
+    context_data = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+>>>>>>> javicmusk
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
