@@ -30,8 +30,9 @@ SECRET_KEY = 'django-insecure-pfvc13s=96w4+9s1m&ed9m85v&z=@qnzkwmbtl6700-hea(*v9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['testserver', 'localhost', '127.0.0.1']
 
+SITE_ID = 1
 
 # Application definition
 
@@ -42,10 +43,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+    'django.contrib.sites',
+
     # Third party apps
     'rest_framework',
-    
+    'allauth',
+    'allauth.account',
+
     # Our apps
     'accounts',
     'analysis',
@@ -61,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'mindtrack.urls'
@@ -100,7 +105,7 @@ DATABASES = {
         # },
         #'CONN_MAX_AGE': 600,  # Optional: keep database connections alive for 10 minutes
     }
-}   
+}
 
 
 # Password validation
@@ -161,6 +166,7 @@ AUTHENTICATION_BACKENDS = [
     'accounts.backends.EmailOrUsernameBackend',  # Our custom backend first
     'django.contrib.auth.backends.ModelBackend',  # Default backend as fallback
 ]
+
 # Login URLs
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
