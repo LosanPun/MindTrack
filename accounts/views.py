@@ -1,11 +1,16 @@
 # accounts/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.views import PasswordResetView, PasswordResetCompleteView
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from django.core.cache import cache
+from django.utils.http import urlencode
+from django.urls import reverse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -71,6 +76,61 @@ class CustomAuthenticationForm(AuthenticationForm):
         })
     )
 
+
+class RateLimitedPasswordResetView(PasswordResetView):
+    """Throttle password reset requests by IP and email to reduce abuse."""
+
+    def _rate_limit_key(self, email):
+        client_ip = (
+            self.request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0].strip()
+            or self.request.META.get('REMOTE_ADDR', '')
+            or 'unknown'
+        )
+        email_norm = (email or '').strip().lower()
+        return f"pwd-reset:{client_ip}:{email_norm}"
+
+    def post(self, request, *args, **kwargs):
+        email = request.POST.get('email', '')
+        key = self._rate_limit_key(email)
+        attempts = int(cache.get(key, 0))
+        max_attempts = int(getattr(settings, 'PASSWORD_RESET_RATE_LIMIT_ATTEMPTS', 5))
+        window_seconds = int(getattr(settings, 'PASSWORD_RESET_RATE_LIMIT_WINDOW', 900))
+
+        if attempts >= max_attempts:
+            form = self.get_form()
+            form.add_error(None, 'Too many reset attempts. Please try again later.')
+            return self.form_invalid(form)
+
+        cache.set(key, attempts + 1, timeout=window_seconds)
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        # Avoid django.contrib.sites defaulting to example.com by forcing host/protocol.
+        domain_override = getattr(settings, 'PASSWORD_RESET_DOMAIN', '') or self.request.get_host()
+        use_https = getattr(settings, 'PASSWORD_RESET_USE_HTTPS', self.request.is_secure())
+        form.save(
+            use_https=use_https,
+            token_generator=self.token_generator,
+            from_email=self.from_email,
+            email_template_name=self.email_template_name,
+            subject_template_name=self.subject_template_name,
+            request=self.request,
+            html_email_template_name=self.html_email_template_name,
+            extra_email_context=self.extra_email_context,
+            domain_override=domain_override,
+        )
+        return super(PasswordResetView, self).form_valid(form)
+
+
+class PasswordResetCompleteRedirectView(PasswordResetCompleteView):
+    """Show a success message on the login screen after password reset."""
+
+    def get(self, request, *args, **kwargs):
+        messages.success(request, 'Password reset successful. Please sign in with your new password.')
+        login_url = reverse('login')
+        query_string = urlencode({'from_reset': '1'})
+        return redirect(f'{login_url}?{query_string}')
+
 def login_view(request):
     """Handle user login with email or username"""
     if request.method == 'POST':
@@ -107,6 +167,8 @@ def register_view(request):
             user = form.save()
 
             # Auto-login after registration
+            # Specify the backend since we have multiple authentication backends configured
+            user.backend = 'accounts.backends.EmailOrUsernameBackend'
             login(request, user)
 
             messages.success(request, f'Account created successfully! Welcome to MindTrack, {user.username}.')
