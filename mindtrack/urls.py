@@ -8,8 +8,9 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home_view, name='home'),
-    path('accounts/', include('allauth.urls')),
     path('accounts/', include('accounts.urls')),
+    # Keep custom auth routes first so /accounts/login/ uses accounts.views.login_view
+    path('accounts/', include('allauth.urls')),
     path('analysis/', include('analysis.urls', namespace='analysis')),
     path('chatbot/', include('chatbot.urls')),
     path('dashboard/', views.dashboard_view, name='dashboard'),
