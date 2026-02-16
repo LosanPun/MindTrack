@@ -29,8 +29,8 @@ class EmailOrUsernameBackend(ModelBackend):
                 Q(email__iexact=username)
             ).first()
         
-        # Check password
-        if user and user.check_password(password):
+        # Check if user is active and password is correct
+        if user and user.is_active and user.check_password(password):
             return user
         return None
     
