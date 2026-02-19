@@ -5,6 +5,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 from . import views
 
+admin.site.site_header = "MindTrack Administration"
+admin.site.site_title = "MindTrack Admin"
+admin.site.index_title = "MindTrack Control Panel"
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home_view, name='home'),
