@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'allauth',
     'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 
     # Our apps
     'accounts',
@@ -164,6 +166,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
     'accounts.backends.EmailOrUsernameBackend',  # Our custom backend first
+    'allauth.account.auth_backends.AuthenticationBackend',  # allauth backend for social login
     'django.contrib.auth.backends.ModelBackend',  # Default backend as fallback
 ]
 
@@ -171,6 +174,31 @@ AUTHENTICATION_BACKENDS = [
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
+
+# allauth account settings
+ACCOUNT_EMAIL_VERIFICATION = "none"
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+# Google OAuth credentials/config
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '')
+GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET', '')
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
+        "APP": {
+            "client_id": GOOGLE_CLIENT_ID,
+            "secret": GOOGLE_CLIENT_SECRET,
+            "key": "",
+        },
+    }
+}
 
 # Email configuration for password reset flow
 EMAIL_BACKEND = os.getenv(
