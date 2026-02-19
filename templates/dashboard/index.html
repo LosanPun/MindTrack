@@ -157,12 +157,12 @@ Example: 'I had a great day today! Everything went well at work and I feel reall
             <div class="sidebar-section">
                 <h3>
                     <i class="fas fa-history"></i> Recent History
-                    <a href="#" class="view-all" onclick="alert('History page coming soon!')">View All</a>
+                    <a href="{% url 'analysis:history' %}" class="view-all">View All</a>
                 </h3>
                 <div class="history-list" id="historyList">
                     {% if analysis_history %}
                         {% for analysis in analysis_history %}
-                        <div class="history-item">
+                        <a href="{% url 'analysis:history_detail' analysis.id %}" class="history-item">
                             <div class="history-mood">
                                 <span class="mood-badge mood-{{ analysis.detected_mood }}">
                                     {{ analysis.get_detected_mood_display }}
@@ -174,7 +174,7 @@ Example: 'I had a great day today! Everything went well at work and I feel reall
                             <div class="history-time">
                                 {{ analysis.created_at|timesince }} ago
                             </div>
-                        </div>
+                        </a>
                         {% endfor %}
                     {% else %}
                         <div class="no-history">
@@ -189,7 +189,7 @@ Example: 'I had a great day today! Everything went well at work and I feel reall
             <div class="sidebar-section">
                 <h3>Quick Actions</h3>
                 <div class="action-list">
-                    <a href="#" class="action-item" onclick="showHistory()">
+                    <a href="{% url 'analysis:history' %}" class="action-item">
                         <i class="fas fa-history"></i>
                         <span>View Full History</span>
                     </a>
@@ -677,11 +677,17 @@ Example: 'I had a great day today! Everything went well at work and I feel reall
         padding: 15px;
         border-radius: 8px;
         transition: all 0.3s;
+        text-decoration: none;
+        display: block;
+        border: 1px solid transparent;
+        cursor: pointer;
     }
     
     .history-item:hover {
-        background: #e2e8f0;
-        transform: translateX(5px);
+        background: #f0f5ff;
+        border-color: #cbd5e0;
+        transform: translateX(4px);
+        box-shadow: 0 8px 16px rgba(10, 25, 49, 0.08);
     }
     
     .history-mood {
@@ -1252,6 +1258,9 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="history-text">${text.substring(0, 50)}${text.length > 50 ? '...' : ''}</div>
             <div class="history-time">${timeString}</div>
         `;
+        historyItem.addEventListener('click', function() {
+            window.location.href = '{% url "analysis:history" %}';
+        });
         
         // Insert at the beginning
         if (historyList.firstChild) {
@@ -1353,10 +1362,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Placeholder functions for future features
-    function showHistory() {
-        alert('Full history page will be implemented soon!');
-    }
-    
     function showAnalytics() {
         alert('Analytics dashboard will be implemented in the next phase!');
     }

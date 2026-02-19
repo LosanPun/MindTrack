@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Complete Sign Up" %} - MindTrack{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block content %}
+<div class="background-side left-side"></div>
+<div class="background-side right-side"></div>
+
+<div class="social-signup-wrapper">
+    <div class="social-signup-card">
+        <div class="form-header social-signup-header">
+            <h1>{% trans "Almost there" %}</h1>
+            <p>
+                {% blocktrans with provider_name=account.get_provider.name site_name=site.name %}
+                You are signing in with {{ provider_name }} to continue to {{ site_name }}.
+                {% endblocktrans %}
+            </p>
+        </div>
+
+        {% if form.errors %}
+        <div class="alert alert-error">
+            <p>{% trans "Please correct the errors below:" %}</p>
+        </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'socialaccount_signup' %}" class="social-signup-form">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <span class="error-message">{{ field.errors.0 }}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            {{ redirect_field }}
+
+            <button type="submit" class="btn btn-primary">{% trans "Complete Sign Up" %}</button>
+        </form>
+
+        <div class="form-footer social-signup-footer">
+            <a href="{% url 'login' %}">{% trans "Back to login" %}</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fields = document.querySelectorAll('.social-signup-form input, .social-signup-form select, .social-signup-form textarea');
+        fields.forEach((field) => {
+            if (!field.classList.contains('form-control')) {
+                field.classList.add('form-control');
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -118,31 +118,68 @@
 }
 
 .social-btn.google {
-    background: #db4437;
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
     width: 100%;
-    height: 50px;
-    border-radius: 8px;
+    min-height: 58px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    color: white;
-    font-size: 16px;
-    font-weight: 500;
+    justify-content: flex-start;
+    gap: 14px;
+    color: var(--text-dark);
+    font-size: 15px;
+    font-weight: 600;
     text-decoration: none;
     transition: var(--transition);
-    border: none;
+    border: 1px solid #e2e8f0;
     cursor: pointer;
+    padding: 10px 14px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
 }
 
 .social-btn.google:hover {
-    background: #c33d31;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(219, 68, 55, 0.3);
+    transform: translateY(-2px) scale(1.01);
+    border-color: #cbd5e1;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
 }
 
-.social-btn.google i {
-    font-size: 18px;
+.social-btn.google:active {
+    transform: translateY(0);
+}
+
+.google-icon-wrap {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.google-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.google-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.google-text strong {
+    color: #111827;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.google-text small {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 500;
 }
 
 .divider {
@@ -501,6 +538,32 @@
     border: 1px solid #9ae6b4;
 }
 
+/* Social Signup (allauth override) */
+.social-signup-wrapper {
+    width: 100%;
+    max-width: 520px;
+    z-index: 2;
+}
+
+.social-signup-card {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 40px 32px;
+}
+
+.social-signup-header {
+    margin-bottom: 26px;
+}
+
+.social-signup-form .form-control {
+    padding: 14px 14px 14px 14px;
+}
+
+.social-signup-footer {
+    margin-top: 20px;
+}
+
 /* Loading State */
 .btn.loading {
     position: relative;
@@ -584,7 +647,24 @@
     }
     
     .social-btn.google {
-        height: 45px;
+        min-height: 54px;
         font-size: 14px;
+    }
+
+    .social-signup-card {
+        padding: 30px 20px;
+    }
+
+    .google-icon-wrap {
+        width: 32px;
+        height: 32px;
+    }
+
+    .google-text strong {
+        font-size: 14px;
+    }
+
+    .google-text small {
+        font-size: 11px;
     }
 }

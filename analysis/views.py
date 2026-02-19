@@ -1,5 +1,5 @@
 # analysis/views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.db.models import Count
 from django.db.models.functions import TruncDate
 from django.utils import timezone
+from django.core.paginator import Paginator
 from collections import defaultdict
 from datetime import datetime, timedelta
 import json
@@ -433,12 +434,80 @@ def export_data_pdf(request):
 @login_required
 def history_view(request):
     """View analysis history"""
+    all_analyses = MoodAnalysis.objects.filter(user=request.user).order_by('-created_at')
+    filtered_analyses = all_analyses
+
+    selected_mood = request.GET.get('mood', '').strip()
+    date_from = request.GET.get('date_from', '').strip()
+    date_to = request.GET.get('date_to', '').strip()
+
+    if selected_mood:
+        filtered_analyses = filtered_analyses.filter(detected_mood=selected_mood)
+    if date_from:
+        filtered_analyses = filtered_analyses.filter(created_at__date__gte=date_from)
+    if date_to:
+        filtered_analyses = filtered_analyses.filter(created_at__date__lte=date_to)
+
+    paginator = Paginator(filtered_analyses, 8)
+    page_number = request.GET.get('page')
+    analyses_page = paginator.get_page(page_number)
+
+    total_analyses = all_analyses.count()
+    this_month = all_analyses.filter(
+        created_at__year=timezone.now().year,
+        created_at__month=timezone.now().month
+    ).count()
+
     return render(request, 'analysis/history.html', {
         'user': request.user,
-        'analyses': [],
-        'total_analyses': 0,
-        'free_analyses_remaining': 3,
+        'analyses': analyses_page,
+        'total_filtered': filtered_analyses.count(),
+        'total_analyses': total_analyses,
+        'free_analyses_remaining': max(0, 3 - total_analyses),
+        'this_month_analyses': this_month,
+        'selected_mood': selected_mood,
+        'selected_date_from': date_from,
+        'selected_date_to': date_to,
+        'mood_choices': MoodAnalysis.MOOD_CHOICES,
     })
+
+
+@login_required
+def analysis_detail_view(request, analysis_id):
+    """View a single mood analysis record"""
+    analysis = get_object_or_404(MoodAnalysis, id=analysis_id, user=request.user)
+    return render(request, 'analysis/history_detail.html', {
+        'analysis': analysis,
+    })
+
+
+@login_required
+def analysis_edit_view(request, analysis_id):
+    """Edit a saved analysis text"""
+    analysis = get_object_or_404(MoodAnalysis, id=analysis_id, user=request.user)
+
+    if request.method == 'POST':
+        updated_text = request.POST.get('text', '').strip()
+        if not updated_text:
+            messages.error(request, 'Text cannot be empty.')
+            return redirect('analysis:history_detail', analysis_id=analysis.id)
+
+        analysis.text = updated_text
+        analysis.save(update_fields=['text'])
+        messages.success(request, 'Analysis updated successfully.')
+        return redirect('analysis:history_detail', analysis_id=analysis.id)
+
+    return redirect('analysis:history_detail', analysis_id=analysis.id)
+
+
+@login_required
+@require_POST
+def analysis_delete_view(request, analysis_id):
+    """Delete a saved analysis"""
+    analysis = get_object_or_404(MoodAnalysis, id=analysis_id, user=request.user)
+    analysis.delete()
+    messages.success(request, 'Analysis deleted.')
+    return redirect('analysis:history')
 
 @login_required
 def analytics_view(request):
