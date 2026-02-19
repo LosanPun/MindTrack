@@ -45,7 +45,7 @@
             <div class="stat-icon">📊</div>
             <div class="stat-content">
                 <h3>Total Analyses</h3>
-                <p class="stat-number" id="totalAnalysesCount">{{ analysis_history|length }}</p>
+                <p class="stat-number" id="totalAnalysesCount">{{ total_analyses }}</p>
             </div>
         </div>
         
@@ -53,7 +53,7 @@
             <div class="stat-icon">🎯</div>
             <div class="stat-content">
                 <h3>Most Common Mood</h3>
-                <p class="stat-number" id="common-mood">--</p>
+                <p class="stat-number" id="common-mood">{{ most_common_mood }}</p>
             </div>
         </div>
         
@@ -62,7 +62,7 @@
             <div class="stat-content">
                 <h3>Last Analysis</h3>
                 <p class="stat-number" id="last-analysis-time">
-                    Never
+                    {% if last_analysis %}{{ last_analysis.created_at|timesince }} ago{% else %}Never{% endif %}
                 </p>
             </div>
         </div>
