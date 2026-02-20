@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Successful{% endblock %}
+
+{% block content %}
+<div style="max-width: 760px; margin: 40px auto; padding: 24px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px;">
+    <h1 style="margin-top: 0; color: #0a1931;">Payment Successful</h1>
+    <p>Your Khalti payment was verified successfully.</p>
+    <p><strong>Transaction ID:</strong> {{ data.transaction_id|default:"N/A" }}</p>
+    <p><strong>Status:</strong> {{ data.status|default:"Completed" }}</p>
+    <a href="{% url 'dashboard' %}" style="display: inline-block; margin-top: 12px; padding: 10px 16px; background: #0a1931; color: #fff; text-decoration: none; border-radius: 8px;">Return to Dashboard</a>
+</div>
+{% endblock %}

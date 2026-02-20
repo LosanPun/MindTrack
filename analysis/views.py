@@ -22,6 +22,16 @@ from io import BytesIO
 
 from .models import MoodAnalysis
 
+
+def _user_is_premium(user):
+    profile = getattr(user, "profile", None)
+    if not profile or not profile.is_premium:
+        return False
+    if profile.premium_until and timezone.now() > profile.premium_until:
+        return False
+    return True
+
+
 @login_required
 def analyze_text_view(request):
     """Handle mood analysis request (form submission)"""
@@ -59,7 +69,9 @@ def analyze_text_ajax(request):
     try:
         data = json.loads(request.body)
         text = data.get('text', '').strip()
-        
+        is_premium = _user_is_premium(request.user)
+        total_analyses = MoodAnalysis.objects.filter(user=request.user).count()
+
         if not text:
             return JsonResponse({
                 'success': False,
@@ -70,6 +82,12 @@ def analyze_text_ajax(request):
             return JsonResponse({
                 'success': False,
                 'error': 'Text is too short (minimum 3 characters)'
+            })
+
+        if not is_premium and total_analyses >= 3:
+            return JsonResponse({
+                'success': False,
+                'error': 'You have reached your free limit. Please upgrade to premium.'
             })
         
         # Simulate mood analysis based on keywords
@@ -136,7 +154,7 @@ def analyze_text_ajax(request):
                 'confidence': f"{confidence:.0%}",
                 'emotions': emotion_percentages,
                 'emotion_scores': emotions,
-                'free_remaining': 2,  # Hardcoded for demo
+                'free_remaining': "Unlimited" if is_premium else max(0, 3 - total_analyses),
                 'timestamp': datetime.now().strftime('%H:%M'),
             }
         })
@@ -572,11 +590,19 @@ def save_analysis_ajax(request):
         detected_mood = data.get('mood_key', '')
         confidence = data.get('confidence', 0.0)
         emotions = data.get('emotions', {})
+        is_premium = _user_is_premium(request.user)
+        total_analyses = MoodAnalysis.objects.filter(user=request.user).count()
 
         if not text or not detected_mood:
             return JsonResponse({
                 'success': False,
                 'error': 'Missing required data'
+            })
+
+        if not is_premium and total_analyses >= 3:
+            return JsonResponse({
+                'success': False,
+                'error': 'You have reached your free limit. Please upgrade to premium.'
             })
 
         # Save to database
@@ -591,7 +617,9 @@ def save_analysis_ajax(request):
         return JsonResponse({
             'success': True,
             'analysis_id': analysis.id,
-            'message': 'Analysis saved successfully'
+            'message': 'Analysis saved successfully',
+            'total_analyses': total_analyses + 1,
+            'free_remaining': "Unlimited" if is_premium else max(0, 3 - (total_analyses + 1)),
         })
 
     except Exception as e:
