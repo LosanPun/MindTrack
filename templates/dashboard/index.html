@@ -12,7 +12,7 @@
         </div>
         <div class="user-actions">
             <span class="free-counter">
-                Free analyses left: <strong id="freeCounter">{{ free_analyses_remaining }}/3</strong>
+                Free analyses left: <strong id="freeCounter">{% if is_premium %}Unlimited{% else %}{{ free_analyses_remaining }}/3{% endif %}</strong>
             </span>
             <form method="post" action="{% url 'logout' %}" style="display:inline;">
                 {% csrf_token %}
@@ -37,7 +37,7 @@
             <div class="stat-icon">🧠</div>
             <div class="stat-content">
                 <h3>Free Analyses Remaining</h3>
-                <p class="stat-number" id="freeAnalysesCount">{{ free_analyses_remaining }}/3</p>
+                <p class="stat-number" id="freeAnalysesCount">{% if is_premium %}Unlimited{% else %}{{ free_analyses_remaining }}/3{% endif %}</p>
             </div>
         </div>
         
@@ -929,7 +929,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const errorText = document.getElementById('errorText');
     
     // Current free analyses counter
-    let freeAnalysesRemaining = parseInt('{{ free_analyses_remaining }}') || 3;
+    const isPremium = '{{ is_premium|yesno:"true,false" }}' === 'true';
+    let freeAnalysesRemaining = isPremium ? Number.POSITIVE_INFINITY : (parseInt('{{ free_analyses_remaining }}') || 3);
     
     // Character counter
     if (moodInput && charCount) {
@@ -982,7 +983,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Check if user has free analyses left
-        if (freeAnalysesRemaining <= 0) {
+        if (!isPremium && freeAnalysesRemaining <= 0) {
             showError('You have used all free analyses. Please upgrade to premium.');
             document.querySelector('.upgrade-section').scrollIntoView({ 
                 behavior: 'smooth' 
@@ -1003,12 +1004,6 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 // Perform local mood analysis
                 const result = performLocalMoodAnalysis(text);
-                
-                // Decrease free analyses counter
-                freeAnalysesRemaining = Math.max(0, freeAnalysesRemaining - 1);
-                
-                // Update UI counters
-                updateCounters(freeAnalysesRemaining);
                 
                 // Display results
                 displayResults(result);
@@ -1135,7 +1130,7 @@ document.addEventListener('DOMContentLoaded', function() {
             confidence: `${Math.round(confidence * 100)}%`,
             emotions: emotionPercentages,
             emotion_scores: emotions,
-            free_remaining: freeAnalysesRemaining,
+            free_remaining: isPremium ? 'Unlimited' : freeAnalysesRemaining,
             timestamp: timeString
         };
     }
@@ -1211,9 +1206,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show results
         resultsContent.style.display = 'block';
         
-        // Add to history list
-        addToHistory(data.mood, moodInput.value, data.mood_key);
-        
         // Update last analysis time
         document.getElementById('last-analysis-time').textContent = data.timestamp;
         
@@ -1224,6 +1216,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update counters
     function updateCounters(newCount) {
         // Update all counters
+        if (isPremium) {
+            document.getElementById('freeCounter').textContent = 'Unlimited';
+            document.getElementById('freeAnalysesCount').textContent = 'Unlimited';
+            document.getElementById('remainingCount').textContent = 'Unlimited';
+            return;
+        }
         document.getElementById('freeCounter').textContent = `${newCount}/3`;
         document.getElementById('freeAnalysesCount').textContent = `${newCount}/3`;
         document.getElementById('remainingCount').textContent = newCount;
@@ -1284,11 +1282,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function updateStats() {
-        // Update total analyses count
-        const historyItems = document.querySelectorAll('.history-item');
-        const totalAnalyses = historyItems.length;
-        document.getElementById('totalAnalysesCount').textContent = totalAnalyses;
-        
         // Find most common mood
         const moodCounts = {};
         document.querySelectorAll('.mood-badge').forEach(badge => {
@@ -1345,6 +1338,18 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    const mood = document.getElementById('resultMood').textContent;
+                    const moodKey = mood.toLowerCase();
+                    addToHistory(mood, moodInput.value, moodKey);
+                    if (!isPremium) {
+                        freeAnalysesRemaining = data.free_remaining;
+                        updateCounters(freeAnalysesRemaining);
+                    } else {
+                        updateCounters('Unlimited');
+                    }
+                    if (typeof data.total_analyses === 'number') {
+                        document.getElementById('totalAnalysesCount').textContent = data.total_analyses;
+                    }
                     this.innerHTML = '<i class="fas fa-check"></i> Saved!';
                     setTimeout(() => {
                         this.innerHTML = '<i class="fas fa-save"></i> Save to History';
@@ -1406,9 +1411,33 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('Data export feature coming soon!');
     }
     
-    function showUpgradeModal() {
-        alert('Premium upgrade system will be implemented with Khalti payment!');
+    async function showUpgradeModal() {
+        const button = document.querySelector('.btn-upgrade');
+        if (!button) return;
+        button.disabled = true;
+        const original = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirecting...';
+
+        try {
+            const response = await fetch('/payments/khalti/initiate/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+                }
+            });
+            const data = await response.json();
+            if (!response.ok || !data.payment_url) {
+                throw new Error(data.error || 'Unable to initiate payment.');
+            }
+            window.location.href = data.payment_url;
+        } catch (error) {
+            showError(error.message || 'Payment initiation failed.');
+            button.disabled = false;
+            button.innerHTML = original;
+        }
     }
+
+    window.showUpgradeModal = showUpgradeModal;
 });
 </script>
 {% endblock %}

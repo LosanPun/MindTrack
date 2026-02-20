@@ -1,6 +1,9 @@
+from django.contrib.auth.models import User
 from django.contrib.auth.models import Group, Permission
-from django.db.models.signals import post_migrate
+from django.db.models.signals import post_migrate, post_save
 from django.dispatch import receiver
+
+from .models import Profile
 
 VIEWER_GROUP_NAME = "MindTrack Viewers"
 EDITOR_GROUP_NAME = "MindTrack Editors"
@@ -48,3 +51,11 @@ def create_or_update_staff_groups(sender, **kwargs):
     viewer_permissions, editor_permissions = _collect_permissions()
     viewer_group.permissions.set(viewer_permissions)
     editor_group.permissions.set(editor_permissions)
+
+
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.get_or_create(user=instance)
+    else:
+        Profile.objects.get_or_create(user=instance)
